@@ -11,11 +11,11 @@
  * Unzip the Hebrew fonts to the ADB folder.
  * Change directory to the ADB folder.
  * Copy the fonts to the SDCARD, by typing the following commands:
-  * adb push DroidSans-Bold.ttf /sdcard/DroidSans-Bold.ttf
-  * adb push DroidSansMono.ttf /sdcard/DroidSansMono.ttf
-  * adb push DroidSans.ttf /sdcard/DroidSans.ttf
-  * adb push DroidSerif-Bold.ttf /sdcard/DroidSerif-Bold.ttf
-  * adb push DroidSerif-Regular.ttf /sdcard/DroidSerif-Regular.ttf
+  * adb push !DroidSans-Bold.ttf /sdcard/DroidSans-Bold.ttf
+  * adb push !DroidSansMono.ttf /sdcard/DroidSansMono.ttf
+  * adb push !DroidSans.ttf /sdcard/DroidSans.ttf
+  * adb push !DroidSerif-Bold.ttf /sdcard/DroidSerif-Bold.ttf
+  * adb push !DroidSerif-Regular.ttf /sdcard/DroidSerif-Regular.ttf
  * Make the system partition writable:
   * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
  * Copy the fonts to the device's fonts folder:
