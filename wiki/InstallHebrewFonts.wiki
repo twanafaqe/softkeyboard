@@ -1,0 +1,29 @@
+#labels Phase-Support
+#How to install Hebrew fonts in Android
+=How to install Hebrew fonts in Android=
+
+==Required==
+ # A rooted Android. If you want to know how to root an Android, read about it [http://haykuro.theiphoneproject.org/?page_id=35 here].
+ # fonts (Hebrew fonts can be downloaded from [http://softkeyboard.googlecode.com/files/hebdroid.zip here]
+ # ADB tool, which is a part of the Android SDK.
+
+==Steps==
+ * Connect your phone using USB to the computer.
+ * Unzip the Hebrew fonts to the ADB folder.
+ * Change directory to the ADB folder.
+ * Copy the fonts to the SDCARD, by typing the following commands:
+  * adb push DroidSans-Bold.ttf /sdcard/DroidSans-Bold.ttf
+  * adb push DroidSansMono.ttf /sdcard/DroidSansMono.ttf
+  * adb push DroidSans.ttf /sdcard/DroidSans.ttf
+  * adb push DroidSerif-Bold.ttf /sdcard/DroidSerif-Bold.ttf
+  * adb push DroidSerif-Regular.ttf /sdcard/DroidSerif-Regular.ttf
+ * Make the system partition writable:
+  * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
+ * Copy the fonts to the device's fonts folder:
+  * adb shell cat /sdcard/DroidSans-Bold.ttf > /system/fonts/DroidSans-Bold.ttf
+  * adb shell cat /sdcard/DroidSansMono.ttf > /system/fonts/DroidSansMono.ttf
+  * adb shell cat /sdcard/DroidSans.ttf > /system/fonts/DroidSans.ttf
+  * adb shell cat /sdcard/DroidSerif-Bold.ttf > /system/fonts/DroidSerif-Bold.ttf
+  * adb shell cat /sdcard/DroidSerif-Regular.ttf > /system/fonts/DroidSerif-Regular.ttf
+ * We're done - just reboot the device:
+  * adb shell reboot
