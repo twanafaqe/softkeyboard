@@ -1,5 +1,4 @@
 #labels Phase-Support
-#How to install Hebrew fonts in Android
 =How to install Hebrew fonts in Android=
 
 ==Required==
