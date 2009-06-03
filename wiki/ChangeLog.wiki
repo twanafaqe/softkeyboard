@@ -1,0 +1,21 @@
+#summary The versions changes log - what changed with each version
+#labels Featured
+= Latest version =
+== Build 29052009-2 ==
+ * Swipe to change keyboard layouts - swipe right to change language, swipe left to change to symbols
+ * New keyboard layouts
+
+= Previous versions =
+== Build 29052009 ==
+ * Bug fix - no more force close on physical keyboard usages
+== Build 0 ==
+ * All kinds of keyboards:
+  * supporting English, Hebrew and Lao keyboards.
+  * special keyboard for text fields which require only numbers.
+  * special keyboard for text fields which require email or URI addresses. 
+ * Physical keyboard is supported as-well (not for Lao keyboard).
+ * Auto capitalization.
+ * Word suggestions - currently only in English.
+ * special key-press effects:
+  * Sound on key press.
+  * Vibrate on key press. 
