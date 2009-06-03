@@ -1,11 +1,14 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Latest version =
+== Build 03062009 ==
+ * Application icon
+ * bug fix - question mark did not work well in the soft keyboard.
+
+= Previous versions =
 == Build 29052009-2 ==
  * Swipe to change keyboard layouts - swipe right to change language, swipe left to change to symbols
  * New keyboard layouts
-
-= Previous versions =
 == Build 29052009 ==
  * Bug fix - no more force close on physical keyboard usages
 == Build 0 ==
