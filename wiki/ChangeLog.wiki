@@ -1,11 +1,13 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Latest version =
+== Build 10062009 ==
+ * Fixing disappearing characters (issue 3)
+
+= Previous versions =
 == Build 05062009 ==
  * A small change in the Hebrew keyboard layout (TZADIK SOFIT).
  * Extensive change in keyboards infrastructure - now it is easier to add more languages. Any suggestions?
-
-= Previous versions =
 == Build 03062009 ==
  * Application icon
  * bug fix - question mark did not work well in the soft keyboard.
