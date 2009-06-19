@@ -3,12 +3,27 @@
 = Introduction =
 Here we'll learn how to install, use, and setup !AnySoftKeyboard.
 
-==Installing==
-Open Android Market, and lookup "AnySoftKeyboard"
+==Installing and enabling==
+Open Android Market, and lookup "!AnySoftKeyboard".
+...image of AnySoftKeyboard in Market...
+Click "Install".
+ * This keyboard can use the phone's vibration functionality.
+After !AnySoftKeyboard has been downloaded and installed, go to your phone's settings, and select "Locale&text".
+...image of settings...
+Enable "!AnySoftKeyboard", and disable any other keyboard (e.g., "Android Keyboard").
+That's it.
+The keyboard defualt layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
-== Details ==
+==Settings==
+Under Android Settings, select "Locale&text", and then "!AnySoftKeyboard setting".
+...image of keyboard settings...
+===Change layout method===
+...image of popup...
+"Swipe" - swipe your finger over the on-screen-keyboard from one side to the other, to switch layouts. Left-to-right swipe will change alphabet keyboard (e.g., english to hebrew). Right-to-left swipe will change to numeric keyboard.
+ "Hints" - two little keys at the top of the keyboard, with arrows, to remind you to which direction you need to swipe.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+===Effects===
+ * Vibrate on key-press: a short vibration on each key you press.
+ * Sound on key-press: a type-writer sound effects will be played when you press on a key.
+===Keyboards===
+...image of the keyboards list...
