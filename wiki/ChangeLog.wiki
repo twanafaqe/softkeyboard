@@ -1,11 +1,15 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Latest version =
+== Build 19062009 ==
+ * issue 23: Sometimes sound effects do not work. Note: FX are enabled when the phone is not muted, and the volume is controlled by the Notifications volume.
+ * issue 10: Lao keyboard is supported.
+
+= Previous versions =
 == Build 16062009 ==
  * Fixing ALT and SHIFT stickiness in Hebrew (ALT+TAV or SHIFT+TAV).
  * It is possible to disable Swipe.
-
-= Previous versions =
+== Build 13062009 ==
  * Fixing TAV letter in the physical keyboard - not it is possible to type question mark and comma (shift for question mark, ALT for comma)
 == Build 10062009 ==
  * Fixing disappearing characters (issue 3)
