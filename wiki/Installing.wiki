@@ -13,12 +13,11 @@ After !AnySoftKeyboard has been downloaded and installed, go to your phone's set
 
 http://softkeyboard.googlecode.com/files/settings.png
 
-Enable "!AnySoftKeyboard", and disable any other keyboard (e.g., "Android Keyboard").
+In the new screen, enable "!AnySoftKeyboard", and disable any other keyboard (e.g., "Android Keyboard").
 
 http://softkeyboard.googlecode.com/files/enable_anykeyboard.png
 
-That's it.
-
+*That's it!*
 The keyboard defualt layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
 ==Settings==
@@ -27,6 +26,7 @@ Under Android Settings, select "Locale&text", and then "!AnySoftKeyboard setting
 http://softkeyboard.googlecode.com/files/keyboard_settings.png
 
 ===Change layout method===
+Select "Layout change method" from the list, and in the pop-up window, select the desired change method.
 
 http://softkeyboard.googlecode.com/files/swipe_method.png
 
@@ -38,5 +38,13 @@ http://softkeyboard.googlecode.com/files/swipe_method.png
  * Sound on key-press: a type-writer sound effects will be played when you press on a key.
 
 ===Keyboards===
+At the bottom of Any Soft Keyboard settings page, there is a list of all supported keyboard layout. Enable the layouts you wish to use.
 
 http://softkeyboard.googlecode.com/files/keyboards_options.png
+
+==Physical keyboard==
+The HTC G1 device include a physical keyboard. It is possible to use the physical keyboard to type in your own language.
+The physical keyboard layout will be similar to the one currently selected in Any Soft Keyboard on-screen keyboard.
+It is possible to switch layouts by pressing ALT+SPACE in the physical keyboard.
+
+Enjoy!
