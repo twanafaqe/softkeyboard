@@ -2,6 +2,7 @@
 #labels Featured
 = Latest version =
 == Build 19062009 ==
+ * *First version to go into the Android Market.*
  * issue 23: Sometimes sound effects do not work. Note: FX are enabled when the phone is not muted, and the volume is controlled by the Notifications volume.
  * issue 10: Lao keyboard is supported.
 
