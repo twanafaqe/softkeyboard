@@ -1,19 +1,19 @@
-#summary How to install AnySoftKeyboard
+#summary How to install and use Any Soft Keyboard
 #labels Featured
 
 = Introduction =
-Here we'll learn how to install, use, and setup !AnySoftKeyboard.
+Here we'll learn how to install, use, and setup Any Soft Keyboard.
 
 ==Installing and enabling==
-Open Android Market, and lookup "!AnySoftKeyboard".
+Open Android Market, and lookup "Any Soft Keyboard".
 
 Click "Install". Note: this keyboard can use the phone's vibration functionality.
 
-After !AnySoftKeyboard has been downloaded and installed, go to your phone's settings, and select "Locale&text".
+After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Locale&text".
 
 http://softkeyboard.googlecode.com/files/settings.png
 
-In the new screen, enable "!AnySoftKeyboard", and disable any other keyboard (e.g., "Android Keyboard").
+In the new screen, enable "Any Soft Keyboard", and disable any other keyboard (e.g., "Android Keyboard").
 
 http://softkeyboard.googlecode.com/files/enable_anykeyboard.png
 
@@ -21,7 +21,7 @@ http://softkeyboard.googlecode.com/files/enable_anykeyboard.png
 The keyboard defualt layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
 ==Settings==
-Under Android Settings, select "Locale&text", and then "!AnySoftKeyboard setting".
+Under Android Settings, select "Locale&text", and then "Any Soft Keyboard setting".
 
 http://softkeyboard.googlecode.com/files/keyboard_settings.png
 
