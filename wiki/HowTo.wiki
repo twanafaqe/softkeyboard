@@ -13,12 +13,37 @@ After Any Soft Keyboard has been downloaded and installed, go to your phone's se
 
 http://softkeyboard.googlecode.com/files/settings.png
 
-In the new screen, enable "Any Soft Keyboard", and disable any other keyboard (e.g., "Android Keyboard").
+In the new screen, enable "Any Soft Keyboard".
 
 http://softkeyboard.googlecode.com/files/enable_anykeyboard.png
 
+A dialog box will open and will warn you about possible key-logging attacks which can be done by this keyboard application.
+Note: This is a generic message, and will be shown when you enable any keyboard application.
+
+http://softkeyboard.googlecode.com/files/ime_warning.png
+
+You should not worry about approving this keyboard: First, this is an open source application, so anyone can check the code and see if there is something weird here.
+Second, since this application do not have permissions for network access, it is useless for it to store you key-strokes, it can not send it to nowhere :)
+
+Press OK to approve the keyboard.
+
+In order to actually use this keyboard, you'll need to activate it.
+Go to any application with a text field (e.g., Messaging).
+
+http://softkeyboard.googlecode.com/files/messaging_screenshot.png
+
+Create a new message, and long press the trackball on one of the text field ("To" or "Type to compose"). A dialog will pop-up.
+
+http://softkeyboard.googlecode.com/files/messaging_long_press.png
+
+Select "Input method". Another dialog will pop-up with a list of all installed keyboards in your device.
+
+http://softkeyboard.googlecode.com/files/IME_selection.png
+
+Select "Any Soft Keyboard".
+
 *That's it!*
-The keyboard defualt layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
+The keyboard default layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
 ==Settings==
 Under Android Settings, select "Locale&text", and then "Any Soft Keyboard setting".
