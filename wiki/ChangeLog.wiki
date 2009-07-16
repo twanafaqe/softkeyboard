@@ -1,12 +1,16 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Latest version =
+== Build 13072009 ==
+ * New Latin layouts: DVORAK and AZERTY.
+ * New languages: Catalan, Bulgarian, Swiss and Swedish.
+ * Key variations (by long press)
+
+= Previous versions =
 == Build 19062009 ==
  * *First version to go into the Android Market.*
  * issue 23: Sometimes sound effects do not work. Note: FX are enabled when the phone is not muted, and the volume is controlled by the Notifications volume.
  * issue 10: Lao keyboard is supported.
-
-= Previous versions =
 == Build 16062009 ==
  * Fixing ALT and SHIFT stickiness in Hebrew (ALT+TAV or SHIFT+TAV).
  * It is possible to disable Swipe.
