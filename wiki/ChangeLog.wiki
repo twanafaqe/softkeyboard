@@ -2,11 +2,15 @@
 #labels Featured
 = Latest version =
 == Build 13072009 ==
+ * New languages: Russian (phonetic) and Spanish.
+ * Modifications in the layouts
+ * Some bug fixes.
+
+= Previous versions =
+== Build 13072009 ==
  * New Latin layouts: DVORAK and AZERTY.
  * New languages: Catalan, Bulgarian, Swiss and Swedish.
  * Key variations (by long press)
-
-= Previous versions =
 == Build 19062009 ==
  * *First version to go into the Android Market.*
  * issue 23: Sometimes sound effects do not work. Note: FX are enabled when the phone is not muted, and the volume is controlled by the Notifications volume.
