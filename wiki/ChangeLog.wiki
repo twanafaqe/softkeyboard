@@ -1,7 +1,7 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Latest version =
-== Build 13072009 ==
+== Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
  * Some bug fixes.
