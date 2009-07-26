@@ -6,7 +6,7 @@
  * Less memory consumption.
  * New accent keys for C,D,S,Z (Slovenian characters).
 
-= Latest version =
+= Latest released version =
 == Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
