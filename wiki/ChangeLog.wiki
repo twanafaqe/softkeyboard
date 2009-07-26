@@ -1,5 +1,11 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
+= Upcoming version =
+ * New layout - the DEL key has been moved, new Smiley key.
+ * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
+ * Less memory consumption.
+ * New accent keys for C,D,S,Z (Slovenian characters).
+
 = Latest version =
 == Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
