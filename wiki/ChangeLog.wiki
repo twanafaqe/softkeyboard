@@ -5,6 +5,8 @@
  * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
  * Less memory consumption.
  * New accent keys for C,D,S,Z (Slovenian characters).
+ * Bug fix: Symbols layouts will loop on repeated swipe and SHIFT clicks.
+ * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin)
 
 = Latest released version =
 == Build 20072009 ==
