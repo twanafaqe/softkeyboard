@@ -7,7 +7,7 @@
  * New accent keys for C,D,S,Z (Slovenian characters).
  * Bug fix: Symbols layouts will loop on repeated swipe and SHIFT clicks.
  * Bug fix: Accents are working in shift now...
- * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin)
+ * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin, Andrej Živec)
 
 = Latest released version =
 == Build 20072009 ==
