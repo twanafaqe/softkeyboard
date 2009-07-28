@@ -15,12 +15,11 @@
  * Bug fix: Accents are working in shift now...
  * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin, Andrej Živec)
 
+= Previous versions =
 == Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
  * Some bug fixes.
-
-= Previous versions =
 == Build 13072009 ==
  * New Latin layouts: DVORAK and AZERTY.
  * New languages: Catalan, Bulgarian, Swiss and Swedish.
