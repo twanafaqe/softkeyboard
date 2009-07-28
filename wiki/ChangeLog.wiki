@@ -1,6 +1,12 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
+ * not decided yet. Probably:
+  * Suggestions
+  * Another Russian layout
+
+= Latest released version =
+== Build 20090726 (note: different build semantics) ==
  * New layout - the DEL key has been moved, new Smiley key.
  * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
  * Less memory consumption.
@@ -9,7 +15,6 @@
  * Bug fix: Accents are working in shift now...
  * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin, Andrej Živec)
 
-= Latest released version =
 == Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
