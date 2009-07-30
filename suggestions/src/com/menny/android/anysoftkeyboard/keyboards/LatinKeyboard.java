@@ -1,10 +1,5 @@
 package com.menny.android.anysoftkeyboard.keyboards;
 
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
-import android.inputmethodservice.Keyboard.Key;
-import android.inputmethodservice.Keyboard.Row;
-
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
 

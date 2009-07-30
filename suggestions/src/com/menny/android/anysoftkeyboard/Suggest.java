@@ -45,9 +45,9 @@ public class Suggest implements Dictionary.WordCallback {
     
     private int[] mPriorities = new int[mPrefMaxSuggestions];
     private List<CharSequence> mSuggestions = new ArrayList<CharSequence>();
-    private boolean mIncludeTypedWordIfValid;
+    //private boolean mIncludeTypedWordIfValid;
     private List<CharSequence> mStringPool = new ArrayList<CharSequence>();
-    private Context mContext;
+    //private Context mContext;
     private boolean mHaveCorrection;
     private CharSequence mOriginalWord;
     private String mLowerOriginalWord;
@@ -56,7 +56,7 @@ public class Suggest implements Dictionary.WordCallback {
 
 
     public Suggest(Context context/*, int dictionaryResId*/) {
-        mContext = context;
+        //mContext = context;
         //mMainDict = new BinaryDictionary(context, dictionaryResId);
         for (int i = 0; i < mPrefMaxSuggestions; i++) {
             StringBuilder sb = new StringBuilder(32);
@@ -130,7 +130,7 @@ public class Suggest implements Dictionary.WordCallback {
         mHaveCorrection = false;
         collectGarbage();
         Arrays.fill(mPriorities, 0);
-        mIncludeTypedWordIfValid = includeTypedWordIfValid;
+        //mIncludeTypedWordIfValid = includeTypedWordIfValid;
         
         // Save a lowercase version of the original word
         mOriginalWord = wordComposer.getTypedWord();

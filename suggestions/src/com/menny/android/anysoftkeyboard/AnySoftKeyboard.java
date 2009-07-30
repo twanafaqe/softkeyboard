@@ -16,15 +16,16 @@
 
 package com.menny.android.anysoftkeyboard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -32,33 +33,18 @@ import android.media.AudioManager;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.AutoText;
-import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.PrintWriterPrinter;
-import android.util.Printer;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
-import com.menny.android.anysoftkeyboard.keyboards.GenericKeyboard;
-import com.menny.android.anysoftkeyboard.keyboards.KeyboardFactory;
-import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
 
 /**
  * Input method implementation for Qwerty'ish keyboard.
@@ -69,17 +55,17 @@ public class AnySoftKeyboard extends InputMethodService
         AnyKeyboardContextProvider {
         
     
-	private enum NextKeyboardType 
-	{
-		Alphabet,
-		SupportsPhysical,
-		Any
-	}
+//	private enum NextKeyboardType 
+//	{
+//		Alphabet,
+//		Symbols,
+//		Any
+//	}
 	
     static final boolean DEBUG = false;
     static final boolean TRACE = false;
     
-    private static final int KEYBOARD_NOTIFICATION_ID = 1;
+    //private static final int KEYBOARD_NOTIFICATION_ID = 1;
     
     private static final String PREF_VIBRATE_ON = "vibrate_on";
     private static final String PREF_SOUND_ON = "sound_on";
@@ -89,21 +75,21 @@ public class AnySoftKeyboard extends InputMethodService
     private static final String PREF_AUTO_COMPLETE = "auto_complete";
 
     private static final int MSG_UPDATE_SUGGESTIONS = 0;
-    private static final int MSG_START_TUTORIAL = 1;
+    //private static final int MSG_START_TUTORIAL = 1;
     
     // How many continuous deletes at which to start deleting at a higher speed.
-    private static final int DELETE_ACCELERATE_AT = 20;
+    //private static final int DELETE_ACCELERATE_AT = 20;
     // Key events coming any faster than this are long-presses.
-    private static final int QUICK_PRESS = 200; 
+    //private static final int QUICK_PRESS = 200; 
     
     private static final int KEYCODE_ENTER = 10;
     private static final int KEYCODE_SPACE = ' ';
 
     // Contextual menu positions
-    private static final int POS_SETTINGS = 0;
-    private static final int POS_METHOD = 1;
+    //private static final int POS_SETTINGS = 0;
+    //private static final int POS_METHOD = 1;
     
-    private KeyboardView mInputView;
+    private AnyKeyboardView mInputView;
     private CandidateViewContainer mCandidateViewContainer;
     private CandidateView mCandidateView;
     private Suggest mSuggest;
@@ -135,6 +121,9 @@ public class AnySoftKeyboard extends InputMethodService
     private boolean mShowSuggestions;
     private boolean mAutoComplete;
     private int     mCorrectionMode;
+    
+    public static String mChangeKeysMode;
+    
     // Indicates whether the suggestion strip is to be on in landscape
     private boolean mJustAccepted;
     private CharSequence mJustRevertedSeparator;
@@ -143,7 +132,7 @@ public class AnySoftKeyboard extends InputMethodService
     
     //private Tutorial mTutorial;
 
-    private Vibrator mVibrator;
+    //private Vibrator mVibrator;
 //    private long mVibrateDuration;
 
     private AudioManager mAudioManager;
@@ -227,13 +216,12 @@ public class AnySoftKeyboard extends InputMethodService
     
     @Override
     public View onCreateInputView() {
-        mInputView = (KeyboardView)getLayoutInflater().inflate(
-                R.layout.input, null);
+        mInputView = (AnyKeyboardView)getLayoutInflater().inflate(R.layout.input, null);
+        
         mKeyboardSwitcher.setInputView(mInputView);
         mKeyboardSwitcher.makeKeyboards();
         mInputView.setOnKeyboardActionListener(this);
-        mInputView.setKeyboard(getLastSelectedKeyboard());
-        mKeyboardSwitcher.setKeyboardMode(/*KeyboardSwitcher.MODE_TEXT,*/ 0);
+        mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT, 0);
         return mInputView;
     }
 
@@ -266,12 +254,17 @@ public class AnySoftKeyboard extends InputMethodService
         switch (attribute.inputType&EditorInfo.TYPE_MASK_CLASS) {
             case EditorInfo.TYPE_CLASS_NUMBER:
             case EditorInfo.TYPE_CLASS_DATETIME:
+                mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_SYMBOLS,
+                        attribute.imeOptions);
+                //mKeyboardSwitcher.toggleSymbols();
+                break;
             case EditorInfo.TYPE_CLASS_PHONE:
-                mCurKeyboard = mSymbolsKeyboards[PHONE_KEYBOARD_INDEX];
-                mLastSelectedSymbolsKeyboard = PHONE_KEYBOARD_INDEX;
+                mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_PHONE,
+                        attribute.imeOptions);
                 break;
             case EditorInfo.TYPE_CLASS_TEXT:
-            	mCurKeyboard = getLastSelectedKeyboard();
+                mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT,
+                        attribute.imeOptions);
                 //startPrediction();
                 mPredictionOn = true;
                 // Make sure that passwords are not displayed in candidate view
@@ -307,13 +300,14 @@ public class AnySoftKeyboard extends InputMethodService
                 updateShiftKeyState(attribute);
                 break;
             default:
-            	mCurKeyboard = getLastSelectedKeyboard();
+                mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT,
+                        attribute.imeOptions);
                 updateShiftKeyState(attribute);
         }
-        
         mInputView.closing();
-        mWord.reset();
+        mComposing.setLength(0);
         mPredicting = false;
+        //mDeleteCount = 0;
         setCandidatesViewShown(false);
         if (mCandidateView != null) mCandidateView.setSuggestions(null, false, false, false);
         loadSettings();
@@ -323,9 +317,6 @@ public class AnySoftKeyboard extends InputMethodService
         }
         mPredictionOn = mPredictionOn && mCorrectionMode > 0;
         //checkTutorial(attribute.privateImeOptions);
-        mCurKeyboard.setImeOptions(getResources(), attribute.imeOptions);
-        mCurKeyboard.setTextVariation(getResources(), attribute.inputType);
-        
         if (TRACE) Debug.startMethodTracing("latinime");
     }
 
@@ -536,12 +527,20 @@ public class AnySoftKeyboard extends InputMethodService
         return true;
     }
 
-    private boolean isAlphabet(int code) {
-        if (Character.isLetter(code)) {
-            return true;
-        } else {
-            return false;
-        }
+//    private boolean isAlphabet(int code) {
+//        if (Character.isLetter(code)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+    
+    /**
+     * Helper to determine if a given character code is alphabetic.
+     */
+    private boolean isAlphabet(int code) 
+    {
+        return mKeyboardSwitcher.getCurrentKeyboard().isLetter((char)code);
     }
     
     // Implementation of KeyboardViewListener
@@ -567,7 +566,7 @@ public class AnySoftKeyboard extends InputMethodService
                 }
                 break;
             case AnyKeyboardView.KEYCODE_OPTIONS:
-                showOptionsMenu();
+                //showOptionsMenu();
                 break;
             case AnyKeyboardView.KEYCODE_SHIFT_LONGPRESS:
                 if (mCapsLock) {
@@ -577,7 +576,10 @@ public class AnySoftKeyboard extends InputMethodService
                 }
                 break;
             case Keyboard.KEYCODE_MODE_CHANGE:
-                changeKeyboardMode();
+                nextKeyboard(getCurrentInputEditorInfo(), false);
+                break;
+            case AnyKeyboard.KEYCODE_LANG_CHANGE:
+                nextKeyboard(getCurrentInputEditorInfo(), true);
                 break;
             default:
                 if (isWordSeparator(primaryCode)) {
@@ -638,8 +640,8 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     private void handleShift() {
-        Keyboard currentKeyboard = mInputView.getKeyboard();
-        if (mKeyboardSwitcher.isAlphabetMode()isAlphabetMode()) {
+        //Keyboard currentKeyboard = mInputView.getKeyboard();
+        if (mKeyboardSwitcher.isAlphabetMode()) {
             // Alphabet keyboard
             checkToggleCapsLock();
             mInputView.setShifted(mCapsLock || !mInputView.isShifted());
@@ -674,7 +676,7 @@ public class AnySoftKeyboard extends InputMethodService
             sendKeyChar((char)primaryCode);
         }
         updateShiftKeyState(getCurrentInputEditorInfo());
-        measureCps();
+        //measureCps();
         TextEntryState.typedCharacter((char) primaryCode, isWordSeparator(primaryCode));
     }
 
@@ -734,7 +736,7 @@ public class AnySoftKeyboard extends InputMethodService
     private void toggleCapsLock() {
         mCapsLock = !mCapsLock;
         if (mKeyboardSwitcher.isAlphabetMode()) {
-            ((LatinKeyboard) mInputView.getKeyboard()).setShiftLocked(mCapsLock);
+            ((AnyKeyboard) mInputView.getKeyboard()).setShiftLocked(mCapsLock);
         }
     }
 
@@ -886,17 +888,19 @@ public class AnySoftKeyboard extends InputMethodService
         }
     }
 
-    protected String getWordSeparators() {
-        return mWordSeparators;
-    }
+//    protected String getWordSeparators() {
+//        return mWordSeparators;
+//    }
     
     public boolean isWordSeparator(int code) {
-        String separators = getWordSeparators();
-        return separators.contains(String.valueOf((char)code));
+        //String separators = getWordSeparators();
+        //return separators.contains(String.valueOf((char)code));
+    	return isAlphabet(code);
     }
 
     public boolean isSentenceSeparator(int code) {
-        return mSentenceSeparators.contains(String.valueOf((char)code));
+        //return mSentenceSeparators.contains(String.valueOf((char)code));
+    	return isAlphabet(code);
     }
 
     private void sendSpace() {
@@ -910,30 +914,100 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     public void swipeRight() {
-        if (LatinKeyboardView.DEBUG_AUTO_PLAY) {
-            ClipboardManager cm = ((ClipboardManager)getSystemService(CLIPBOARD_SERVICE));
-            CharSequence text = cm.getText();
-            if (!TextUtils.isEmpty(text)) {
-                mInputView.startPlaying(text.toString());
-            }
-        }
-    }
-    
-    public void swipeLeft() {
-        //handleBackspace();
+//        if (LatinKeyboardView.DEBUG_AUTO_PLAY) {
+//            ClipboardManager cm = ((ClipboardManager)getSystemService(CLIPBOARD_SERVICE));
+//            CharSequence text = cm.getText();
+//            if (!TextUtils.isEmpty(text)) {
+//                mInputView.startPlaying(text.toString());
+//            }
+//        }
+    	//this should be done only if swipe was enabled
+    	if (mChangeKeysMode.equals("3"))
+    	{
+    		//TODO: space/backspace (depends on direction of keyboard)
+    	}
+    	else
+    	{
+    		nextKeyboard(getCurrentInputEditorInfo(), true);
+    	}
     }
 
+	public void swipeLeft() {
+		//this should be done only if swipe was enabled
+    	if (mChangeKeysMode.equals("3"))
+    	{
+    		//TODO: space/backspace (depends on direction of keyboard)
+    	}
+    	else
+    	{
+    		nextKeyboard(getCurrentInputEditorInfo(), false);
+    	}
+    }
+
+	private void nextKeyboard(EditorInfo currentEditorInfo, boolean alphabet) 
+	{
+		Log.d("AnySoftKeyboard", "nextKeyboard: currentEditorInfo.inputType="+currentEditorInfo.inputType+" alphabet:"+alphabet);
+		
+		AnyKeyboard currentKeyboard = mKeyboardSwitcher.getCurrentKeyboard();
+		if (currentKeyboard == null)
+		{
+			Log.d("AnySoftKeyboard", "nextKeyboard: Looking for next keyboard. No current keyboard.");
+		}
+		else
+		{
+			Log.d("AnySoftKeyboard", "nextKeyboard: Looking for next keyboard. Current keyboard is:"+currentKeyboard.getKeyboardName());
+		}
+		//in numeric keyboards, the LANG key will go back to the original alphabet keyboard-
+		//so no need to look for the next keyboard, 'mLastSelectedKeyboard' holds the last
+		//keyboard used.
+		currentKeyboard = alphabet?
+				mKeyboardSwitcher.nextAlphabetKeyboard(currentEditorInfo)
+				: mKeyboardSwitcher.nextSymbolsKeyboard(currentEditorInfo);
+		
+		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "+currentKeyboard.getKeyboardName());
+		updateShiftKeyState(currentEditorInfo);
+	}
+	
     public void swipeDown() {
-        //handleClose();
+        handleClose();
     }
 
     public void swipeUp() {
-        //launchSettings();
+    	handleShift();
     }
 
     public void onPress(int primaryCode) {
-        vibrate();
-        playKeyClick(primaryCode);
+    	if(mVibrateOn)
+    	{
+    		Log.d("AnySoftKeyboard", "Vibrating on key-pressed");
+    		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(25);
+    	}
+    	if(mSoundOn && (!mSilentMode))
+    	{
+    		AudioManager manager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+    		//Will use sound effects ONLY if the device is not muted.
+    		if (manager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL)
+    		{
+	    		int keyFX = AudioManager.FX_KEY_CLICK;
+	    		switch(primaryCode)
+	    		{
+	    			case 13:
+	    				keyFX = AudioManager.FX_KEYPRESS_RETURN;
+	    			case Keyboard.KEYCODE_DELETE:
+	    				keyFX = AudioManager.FX_KEYPRESS_DELETE;
+	    			case 32:
+	    				keyFX = AudioManager.FX_KEYPRESS_SPACEBAR;
+	    		}
+	    		int volume = manager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+	    		Log.d("AnySoftKeyboard", "Sound on key-pressed. Sound ID:"+keyFX+" with volume "+volume);
+	    		
+    			manager.playSoundEffect(keyFX, volume);
+    		}
+    		else
+    		{
+    			Log.d("AnySoftKeyboard", "Devices is muted. No sounds on key-pressed.");
+    		}
+    	}
     }
 
     public void onRelease(int primaryCode) {
@@ -958,71 +1032,71 @@ public class AnySoftKeyboard extends InputMethodService
         }
     }
 
-    private void playKeyClick(int primaryCode) {
-        // if mAudioManager is null, we don't have the ringer state yet
-        // mAudioManager will be set by updateRingerMode
-        if (mAudioManager == null) {
-            if (mInputView != null) {
-                updateRingerMode();
-            }
-        }
-        if (mSoundOn && !mSilentMode) {
-            // FIXME: Volume and enable should come from UI settings
-            // FIXME: These should be triggered after auto-repeat logic
-            int sound = AudioManager.FX_KEYPRESS_STANDARD;
-            switch (primaryCode) {
-                case Keyboard.KEYCODE_DELETE:
-                    sound = AudioManager.FX_KEYPRESS_DELETE;
-                    break;
-                case KEYCODE_ENTER:
-                    sound = AudioManager.FX_KEYPRESS_RETURN;
-                    break;
-                case KEYCODE_SPACE:
-                    sound = AudioManager.FX_KEYPRESS_SPACEBAR;
-                    break;
-            }
-            mAudioManager.playSoundEffect(sound, FX_VOLUME);
-        }
-    }
+//    private void playKeyClick(int primaryCode) {
+//        // if mAudioManager is null, we don't have the ringer state yet
+//        // mAudioManager will be set by updateRingerMode
+//        if (mAudioManager == null) {
+//            if (mInputView != null) {
+//                updateRingerMode();
+//            }
+//        }
+//        if (mSoundOn && !mSilentMode) {
+//            // FIXME: Volume and enable should come from UI settings
+//            // FIXME: These should be triggered after auto-repeat logic
+//            int sound = AudioManager.FX_KEYPRESS_STANDARD;
+//            switch (primaryCode) {
+//                case Keyboard.KEYCODE_DELETE:
+//                    sound = AudioManager.FX_KEYPRESS_DELETE;
+//                    break;
+//                case KEYCODE_ENTER:
+//                    sound = AudioManager.FX_KEYPRESS_RETURN;
+//                    break;
+//                case KEYCODE_SPACE:
+//                    sound = AudioManager.FX_KEYPRESS_SPACEBAR;
+//                    break;
+//            }
+//            mAudioManager.playSoundEffect(sound, FX_VOLUME);
+//        }
+//    }
 
-    private void vibrate() {
-        if (!mVibrateOn) {
-            return;
-        }
-        if (mVibrator == null) {
-            mVibrator = ((Vibrator)getSystemService(Context.VIBRATOR_SERVICE));
-        }
-        mVibrator.vibrate(mVibrateDuration);
-    }
+//    private void vibrate() {
+//        if (!mVibrateOn) {
+//            return;
+//        }
+//        if (mVibrator == null) {
+//            mVibrator = ((Vibrator)getSystemService(Context.VIBRATOR_SERVICE));
+//        }
+//        mVibrator.vibrate(mVibrateDuration);
+//    }
 
-    private void checkTutorial(String privateImeOptions) {
-        if (privateImeOptions == null) return;
-        if (privateImeOptions.equals("com.android.setupwizard:ShowTutorial")) {
-            if (mTutorial == null) startTutorial();
-        } else if (privateImeOptions.equals("com.android.setupwizard:HideTutorial")) {
-            if (mTutorial != null) {
-                if (mTutorial.close()) {
-                    mTutorial = null;
-                }
-            }
-        }
-    }
-    
-    private void startTutorial() {
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_START_TUTORIAL), 500);
-    }
+//    private void checkTutorial(String privateImeOptions) {
+//        if (privateImeOptions == null) return;
+//        if (privateImeOptions.equals("com.android.setupwizard:ShowTutorial")) {
+//            if (mTutorial == null) startTutorial();
+//        } else if (privateImeOptions.equals("com.android.setupwizard:HideTutorial")) {
+//            if (mTutorial != null) {
+//                if (mTutorial.close()) {
+//                    mTutorial = null;
+//                }
+//            }
+//        }
+//    }
+//    
+//    private void startTutorial() {
+//        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_START_TUTORIAL), 500);
+//    }
 
-    void tutorialDone() {
-        mTutorial = null;
-    }
-    
-    private void launchSettings() {
-        handleClose();
-        Intent intent = new Intent();
-        intent.setClass(LatinIME.this, LatinIMESettings.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+//    void tutorialDone() {
+//        mTutorial = null;
+//    }
+//    
+//    private void launchSettings() {
+//        handleClose();
+//        Intent intent = new Intent();
+//        intent.setClass(LatinIME.this, LatinIMESettings.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+//    }
 
     private void loadSettings() {
         // Get the settings preferences
@@ -1038,117 +1112,157 @@ public class AnySoftKeyboard extends InputMethodService
         mAutoComplete = sp.getBoolean(PREF_AUTO_COMPLETE, true) & mShowSuggestions;
         mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
         mCorrectionMode = mAutoComplete ? 2 : (mQuickFixes ? 1 : 0);
-    }
-
-    private void showOptionsMenu() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setIcon(R.drawable.ic_dialog_keyboard);
-        builder.setNegativeButton(android.R.string.cancel, null);
-        CharSequence itemSettings = getString(R.string.english_ime_settings);
-        CharSequence itemInputMethod = getString(R.string.english_ime_name);//getString(com.android.internal.R.string.inputMethod);
-        builder.setItems(new CharSequence[] {
-                itemSettings, itemInputMethod},
-                new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface di, int position) {
-                di.dismiss();
-                switch (position) {
-                    case POS_SETTINGS:
-                        launchSettings();
-                        break;
-                    case POS_METHOD:
-                        //InputMethodManager.getInstance(LatinIME.this).showInputMethodPicker();
-                        break;
-                }
-            }
-        });
-        builder.setTitle(getResources().getString(R.string.english_ime_name));
-        mOptionsDialog = builder.create();
-        Window window = mOptionsDialog.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-        lp.token = mInputView.getWindowToken();
-        lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-        window.setAttributes(lp);
-        window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-        mOptionsDialog.show();
-    }
-
-    private void changeKeyboardMode() {
-        mKeyboardSwitcher.toggleSymbols();
-        if (mCapsLock && mKeyboardSwitcher.isAlphabetMode()) {
-            ((LatinKeyboard) mInputView.getKeyboard()).setShiftLocked(mCapsLock);
-        }
-
-        updateShiftKeyState(getCurrentInputEditorInfo());
-    }
-    
-    @Override protected void dump(FileDescriptor fd, PrintWriter fout, String[] args) {
-        super.dump(fd, fout, args);
         
-        final Printer p = new PrintWriterPrinter(fout);
-        p.println("LatinIME state :");
-        p.println("  Keyboard mode = " + mKeyboardSwitcher.getKeyboardMode());
-        p.println("  mCapsLock=" + mCapsLock);
-        p.println("  mComposing=" + mComposing.toString());
-        p.println("  mPredictionOn=" + mPredictionOn);
-        p.println("  mCorrectionMode=" + mCorrectionMode);
-        p.println("  mPredicting=" + mPredicting);
-        p.println("  mAutoCorrectOn=" + mAutoCorrectOn);
-        p.println("  mAutoSpace=" + mAutoSpace);
-        p.println("  mCompletionOn=" + mCompletionOn);
-        p.println("  TextEntryState.state=" + TextEntryState.getState());
-        p.println("  mSoundOn=" + mSoundOn);
-        p.println("  mVibrateOn=" + mVibrateOn);
+        mChangeKeysMode = sp.getString("keyboard_layout_change_method", "1");
     }
 
-    // Characters per second measurement
-    
-    private static final boolean PERF_DEBUG = false;
-    private long mLastCpsTime;
-    private static final int CPS_BUFFER_SIZE = 16;
-    private long[] mCpsIntervals = new long[CPS_BUFFER_SIZE];
-    private int mCpsIndex;
-    
-    private void measureCps() {
-        if (!LatinIME.PERF_DEBUG) return;
-        long now = System.currentTimeMillis();
-        if (mLastCpsTime == 0) mLastCpsTime = now - 100; // Initial
-        mCpsIntervals[mCpsIndex] = now - mLastCpsTime;
-        mLastCpsTime = now;
-        mCpsIndex = (mCpsIndex + 1) % CPS_BUFFER_SIZE;
-        long total = 0;
-        for (int i = 0; i < CPS_BUFFER_SIZE; i++) total += mCpsIntervals[i];
-        System.out.println("CPS = " + ((CPS_BUFFER_SIZE * 1000f) / total));
-    }
-    
-    private AnyKeyboard getLastSelectedKeyboard() {
-    	if (mLastSelectedKeyboard >= mEnabledKeyboards.size())
-    		mLastSelectedKeyboard = 0;
-    	
-    	mLastSelectedSymbolsKeyboard = 0;//reseting the selection.
-    	return mEnabledKeyboards.get(mLastSelectedKeyboard);
-	}
+//    private void showOptionsMenu() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setCancelable(true);
+//        builder.setIcon(R.drawable.ic_dialog_keyboard);
+//        builder.setNegativeButton(android.R.string.cancel, null);
+//        CharSequence itemSettings = getString(R.string.english_ime_settings);
+//        CharSequence itemInputMethod = getString(R.string.english_ime_name);//getString(com.android.internal.R.string.inputMethod);
+//        builder.setItems(new CharSequence[] {
+//                itemSettings, itemInputMethod},
+//                new DialogInterface.OnClickListener() {
+//
+//            public void onClick(DialogInterface di, int position) {
+//                di.dismiss();
+//                switch (position) {
+//                    case POS_SETTINGS:
+//                        launchSettings();
+//                        break;
+//                    case POS_METHOD:
+//                        //InputMethodManager.getInstance(LatinIME.this).showInputMethodPicker();
+//                        break;
+//                }
+//            }
+//        });
+//        builder.setTitle(getResources().getString(R.string.english_ime_name));
+//        mOptionsDialog = builder.create();
+//        Window window = mOptionsDialog.getWindow();
+//        WindowManager.LayoutParams lp = window.getAttributes();
+//        lp.token = mInputView.getWindowToken();
+//        lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+//        window.setAttributes(lp);
+//        window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+//        mOptionsDialog.show();
+//    }
 
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+//    private void changeKeyboardMode() {
+//        mKeyboardSwitcher.toggleSymbols();
+//        if (mCapsLock && mKeyboardSwitcher.isAlphabetMode()) {
+//            ((AnyKeyboard) mInputView.getKeyboard()).setShiftLocked(mCapsLock);
+//        }
+//
+//        updateShiftKeyState(getCurrentInputEditorInfo());
+//    }
+    
+//    @Override protected void dump(FileDescriptor fd, PrintWriter fout, String[] args) {
+//        super.dump(fd, fout, args);
+//        
+//        final Printer p = new PrintWriterPrinter(fout);
+//        p.println("LatinIME state :");
+//        p.println("  Keyboard mode = " + mKeyboardSwitcher.getKeyboardMode());
+//        p.println("  mCapsLock=" + mCapsLock);
+//        p.println("  mComposing=" + mComposing.toString());
+//        p.println("  mPredictionOn=" + mPredictionOn);
+//        p.println("  mCorrectionMode=" + mCorrectionMode);
+//        p.println("  mPredicting=" + mPredicting);
+//        p.println("  mAutoCorrectOn=" + mAutoCorrectOn);
+//        p.println("  mAutoSpace=" + mAutoSpace);
+//        p.println("  mCompletionOn=" + mCompletionOn);
+//        p.println("  TextEntryState.state=" + TextEntryState.getState());
+//        p.println("  mSoundOn=" + mSoundOn);
+//        p.println("  mVibrateOn=" + mVibrateOn);
+//    }
+
+//    // Characters per second measurement
+//    
+//    private static final boolean PERF_DEBUG = false;
+//    private long mLastCpsTime;
+//    private static final int CPS_BUFFER_SIZE = 16;
+//    private long[] mCpsIntervals = new long[CPS_BUFFER_SIZE];
+//    private int mCpsIndex;
+//    
+//    private void measureCps() {
+//        if (!LatinIME.PERF_DEBUG) return;
+//        long now = System.currentTimeMillis();
+//        if (mLastCpsTime == 0) mLastCpsTime = now - 100; // Initial
+//        mCpsIntervals[mCpsIndex] = now - mLastCpsTime;
+//        mLastCpsTime = now;
+//        mCpsIndex = (mCpsIndex + 1) % CPS_BUFFER_SIZE;
+//        long total = 0;
+//        for (int i = 0; i < CPS_BUFFER_SIZE; i++) total += mCpsIntervals[i];
+//        System.out.println("CPS = " + ((CPS_BUFFER_SIZE * 1000f) / total));
+//    }
+    
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		// TODO Auto-generated method stub
+		Log.d("AnySoftKeyboard", "onSharedPreferenceChanged - key:"+key);
 		
+		mKeyboardSwitcher.makeKeyboards();
 	}
 
-	public void appendCharactersToInput(CharSequence text) {
-		// TODO Auto-generated method stub
-		
+    public void appendCharactersToInput(CharSequence textToCommit) 
+	{
+		mWord.append(textToCommit);
+        mComposing.append(textToCommit);
+		appendStringToInput(textToCommit);
 	}
 
-	public void deleteLastCharactersFromInput(int lenght) {
-		// TODO Auto-generated method stub
+	private void appendStringToInput(CharSequence textToCommit) {
+		//handleTextDirection();
 		
+        if (mCompletionOn)
+        {
+        	getCurrentInputConnection().setComposingText(mWord.getTypedWord(), textToCommit.length());
+        	//updateCandidates();
+        }	
+        else
+        	commitTyped(getCurrentInputConnection());
+        
+        updateShiftKeyState(getCurrentInputEditorInfo());
+	}
+
+	public void deleteLastCharactersFromInput(int countToDelete) 
+	{
+		final int currentLength = mWord.getTypedWord().length();
+		boolean shouldDeleteUsingCompletion;
+		if (currentLength > 0)
+		{
+			shouldDeleteUsingCompletion = true;
+	        if (currentLength > countToDelete) {
+	            mComposing.delete(currentLength - countToDelete, currentLength);
+	            
+	            mWord.deleteLast(countToDelete);
+	        } 
+	        else 
+	        {
+	            mComposing.setLength(0);
+	            mWord.reset();
+	        }
+		}
+		else
+		{
+			shouldDeleteUsingCompletion = false;
+		}
+		
+		if (mCompletionOn && shouldDeleteUsingCompletion)
+        {
+        	getCurrentInputConnection().setComposingText(mComposing, 1);
+        	//updateCandidates();
+        }
+		else
+		{
+			getCurrentInputConnection().deleteSurroundingText(countToDelete, 0);
+		}
+        updateShiftKeyState(getCurrentInputEditorInfo());
 	}
 
 	public SharedPreferences getSharedPreferences() {
-		// TODO Auto-generated method stub
-		return null;
+		return PreferenceManager.getDefaultSharedPreferences(this);
 	}
 }
 

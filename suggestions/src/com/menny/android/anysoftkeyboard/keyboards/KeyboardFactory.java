@@ -1,7 +1,6 @@
 package com.menny.android.anysoftkeyboard.keyboards;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.menny.android.anysoftkeyboard.R;
 

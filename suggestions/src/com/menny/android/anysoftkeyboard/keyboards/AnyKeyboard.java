@@ -1,19 +1,15 @@
 
 package com.menny.android.anysoftkeyboard.keyboards;
 
-import java.util.ArrayList;
-
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.inputmethodservice.Keyboard;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
+import com.menny.android.anysoftkeyboard.AnySoftKeyboard;
 import com.menny.android.anysoftkeyboard.R;
-import com.menny.android.anysoftkeyboard.SoftKeyboard;
 
 public abstract class AnyKeyboard extends Keyboard 
 {
@@ -30,10 +26,21 @@ public abstract class AnyKeyboard extends Keyboard
 		char translatePhysicalCharacter(int keyCode, int metaKeys);
 	}
 
+	private static final int SHIFT_OFF = 0;
+    private static final int SHIFT_ON = 1;
+    private static final int SHIFT_LOCKED = 2;
+    
+    private int mShiftState = SHIFT_OFF;
+    
 	private final String mKeyboardName;
     private final boolean mLeftToRightLanguageDirection;
 	//private final String mKeyboardPrefId;
     
+//    private Drawable mShiftLockIcon;
+//    private Drawable mShiftLockPreviewIcon;
+//    private Drawable mOldShiftIcon;
+//    private Drawable mOldShiftPreviewIcon;
+//    private Key mShiftKey;
     private Key mEnterKey;
 	private Key mSmileyKey;
 	private Key mQuestionMarkKey;
@@ -62,6 +69,10 @@ public abstract class AnyKeyboard extends Keyboard
         //XmlResourceParser p = getResources().getXml(id from the constructor parameter);
         //parse to a HashMap?
         //mTopKeys = new ArrayList<Key>();
+        
+//        mShiftLockIcon = context.getApplicationContext().getResources().getDrawable(R.drawable.sym_keyboard_shift_locked);
+//        mShiftLockPreviewIcon = context.getApplicationContext().getResources().getDrawable(R.drawable.sym_keyboard_feedback_shift_locked);
+//        mShiftLockPreviewIcon.setBounds(0, 0, mShiftLockPreviewIcon.getIntrinsicWidth(),mShiftLockPreviewIcon.getIntrinsicHeight());
     }
     
     protected AnyKeyboardContextProvider getKeyboardContext()
@@ -101,13 +112,13 @@ public abstract class AnyKeyboard extends Keyboard
 	        else if ((key.codes[0] == Keyboard.KEYCODE_MODE_CHANGE) ||
 	        		 (key.codes[0] == AnyKeyboard.KEYCODE_LANG_CHANGE))
 	        {
-	        	if (SoftKeyboard.mChangeKeysMode.equals("2"))
+	        	if (AnySoftKeyboard.mChangeKeysMode.equals("2"))
 	        	{
 	        		key.label = null;
 	        		key.height = 0;
 	        		key.width = 0;
 	        	}
-	        	else if (SoftKeyboard.mChangeKeysMode.equals("3"))
+	        	else if (AnySoftKeyboard.mChangeKeysMode.equals("3"))
 	        	{
 	        		String keyText = (key.codes[0] == Keyboard.KEYCODE_MODE_CHANGE)?
 	        				res.getString(R.string.change_symbols_regular) :
@@ -147,9 +158,9 @@ public abstract class AnyKeyboard extends Keyboard
     	if ((aRow.rowEdgeFlags&EDGE_TOP) != 0)
     	{
     		//top row
-    		if (SoftKeyboard.mChangeKeysMode.equals("2"))
+    		if (AnySoftKeyboard.mChangeKeysMode.equals("2"))
     			aRow.defaultHeight = 0;
-    		else if (SoftKeyboard.mChangeKeysMode.equals("3"))
+    		else if (AnySoftKeyboard.mChangeKeysMode.equals("3"))
     			aRow.defaultHeight *= 1.5;
     	}
     	return aRow;
@@ -235,15 +246,61 @@ public abstract class AnyKeyboard extends Keyboard
         else
         	return false;
     }
-	public void addSuggestions(String currentWord, ArrayList<String> list) 
-	{
-	}
+//	public void addSuggestions(String currentWord, ArrayList<String> list) 
+//	{
+//	}
 	
+	public void setShiftLocked(boolean shiftLocked) {
+//        if (mShiftKey != null) {
+//            if (shiftLocked) {
+//                mShiftKey.on = true;
+//                mShiftKey.icon = mShiftLockIcon;
+//                mShiftState = SHIFT_LOCKED;
+//            } else {
+//                mShiftKey.on = false;
+//                mShiftKey.icon = mShiftLockIcon;
+//                mShiftState = SHIFT_ON;
+//            }
+//        }
+    }
+    
+    @Override
+    public boolean isShifted() {
+//        if (mShiftKey != null) {
+//            return mShiftState != SHIFT_OFF;
+//        } else {
+            return super.isShifted();
+//        }
+    }
+    
+//    @Override
+//    public boolean setShifted(boolean shiftState) {
+//        boolean shiftChanged = false;
+//        if (mShiftKey != null) {
+//            if (shiftState == false) {
+//                shiftChanged = mShiftState != SHIFT_OFF;
+//                mShiftState = SHIFT_OFF;
+//                mShiftKey.on = false;
+//                mShiftKey.icon = mOldShiftIcon;
+//            } else {
+//                if (mShiftState == SHIFT_OFF) {
+//                    shiftChanged = mShiftState == SHIFT_OFF;
+//                    mShiftState = SHIFT_ON;
+//                    mShiftKey.icon = mShiftLockIcon;
+//                }
+//            }
+//        } else {
+//            return super.setShifted(shiftState);
+//        }
+//        return shiftChanged;
+//    }
+    
 	@Override
 	public boolean setShifted(boolean shiftState) 
 	{
 		boolean result = super.setShifted(shiftState);
 		Log.d("AnySoftKeyboard", "setShifted: shiftState:"+shiftState+". result:"+result);
+		mShiftState = shiftState? SHIFT_ON : SHIFT_OFF;
 		if (result)
 		{//layout changed. Need to change labels.
 			for(Key aKey : getKeys())
@@ -253,6 +310,10 @@ public abstract class AnyKeyboard extends Keyboard
 		}
 		
 		return result;
+	}
+	
+	public boolean isShiftLocked() {
+		return mShiftState == SHIFT_LOCKED;
 	}
 
 	protected void onKeyShifted(Key aKey, boolean shiftState) 
@@ -438,5 +499,4 @@ public abstract class AnyKeyboard extends Keyboard
 					clickedY <= endY;
 		}
     }
-
 }

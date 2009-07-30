@@ -130,9 +130,9 @@ public class WordComposer {
         return mTypedWord;
     }
 
-//    public void setCapitalized(boolean capitalized) {
-//        mIsCapitalized = capitalized;
-//    }
+    public void setCapitalized(boolean capitalized) {
+        mIsCapitalized = capitalized;
+    }
     
     /**
      * Whether or not the user typed a capital letter as the first letter in the word
