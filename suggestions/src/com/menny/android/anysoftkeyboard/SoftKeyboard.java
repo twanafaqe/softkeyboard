@@ -237,9 +237,6 @@ public class SoftKeyboard extends InputMethodService
     	Log.i("AnySoftKeyboard", "onCreateCandidatesView. mCompletionOn:"+mCompletionOn);
     	if (mCompletionOn)
     	{
-    		mSuggest = new Suggest(this);
-    		mSuggest.setUserDictionary(new UserDictionary(this));
-    		
     		mCandidateView = new CandidateView(this);
     		mCandidateView.setService(this);
     		
@@ -247,9 +244,6 @@ public class SoftKeyboard extends InputMethodService
     	}
     	else
     	{
-    		mSuggest = null;
-    		//clearing memory of old suggest and dictionary.
-    		java.lang.System.gc();
     		return null;
     	}
     }
@@ -357,7 +351,20 @@ public class SoftKeyboard extends InputMethodService
                 mCurKeyboard = getLastSelectedKeyboard();
                 updateShiftKeyState(attribute);
         }
-        
+        //turning on suggestions if needed
+        if (mCompletionOn)
+        {
+        	Log.i("AnySoftKeyboard", "Creating Suggestion manager");
+        	mSuggest = new Suggest(this);
+    		mSuggest.setUserDictionary(new UserDictionary(this));
+    		super.setCandidatesViewShown(true);
+        }
+        else
+        {
+        	Log.i("AnySoftKeyboard", "Suggestion manager is not required (mShowCandidates: "+mShowCandidates+")");
+        	mSuggest = null;
+        	System.gc();
+        }
         // Update the label on the enter key, depending on what the application
         // says it will do.
         mCurKeyboard.setImeOptions(getResources(), attribute.imeOptions);
@@ -825,10 +832,13 @@ public class SoftKeyboard extends InputMethodService
      */
     private void updateCandidates() 
     {
+    	Log.v("AnySoftKeyboard", "updateCandidates() entered");
         if (mCompletionOn) 
         {
+        	Log.v("AnySoftKeyboard", "updateCandidates() mCompletionOn");
             if (mWordComposer.getTypedWord().length() > 0) 
             {
+            	Log.v("AnySoftKeyboard", "updateCandidates() WordComposer.getTypedWord().length() > 0");
 //                ArrayList<String> list = new ArrayList<String>();
 //                String currentWord = mComposing.toString();
 //                if (mCurKeyboard.isLeftToRightLanguage())
@@ -838,13 +848,16 @@ public class SoftKeyboard extends InputMethodService
                 //asking current keyboard for suggestions
                 //mCurKeyboard.addSuggestions(currentWord, list);
                 List<CharSequence> list = mSuggest.getSuggestions(mInputView, mWordComposer, true);
+                Log.d("AnySoftKeyboard", "updateCandidates() get "+list.size()+" suggestions from suggestion manager.");
                 setSuggestions(list, true, true);
             } 
             else 
             {
+            	Log.v("AnySoftKeyboard", "updateCandidates() mCompletionOn==false");
                 setSuggestions(null, false, false);
             }
         }
+        Log.v("AnySoftKeyboard", "updateCandidates() exit");
     }
     
     public void setSuggestions(List<CharSequence> suggestions, boolean completions, boolean typedWordValid) {
@@ -852,6 +865,11 @@ public class SoftKeyboard extends InputMethodService
             setCandidatesViewShown(true);
         } else if (isExtractViewShown()) {
             setCandidatesViewShown(true);
+        }
+        
+        if (mCompletionOn && (mCandidateView == null))
+        {
+        	mCandidateView = onCreateCandidatesView();
         }
         if (mCandidateView != null /*&& mPredictionOn*/) {
             mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
@@ -877,12 +895,12 @@ public class SoftKeyboard extends InputMethodService
     }
     
     private void handleCharacter(int primaryCode, int[] keyCodes) {
+    	primaryCode = translatePrimaryCodeFromCurrentKeyboard(primaryCode);
     	mWordComposer.add(primaryCode, keyCodes);
-        primaryCode = translatePrimaryCodeFromCurrentKeyboard(primaryCode);
-        
+    	
         //it is an alphabet character
         CharSequence textToCommit = String.valueOf((char) primaryCode);
-        appendCharactersToInput(textToCommit);
+        appendStringToInput(textToCommit);
     }
 
 	private int translatePrimaryCodeFromCurrentKeyboard(int primaryCode) {
@@ -995,7 +1013,7 @@ public class SoftKeyboard extends InputMethodService
     	if(mVibrateOnKeyPress)
     	{
     		Log.d("AnySoftKeyboard", "Vibrating on key-pressed");
-    		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(20);
+    		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(25);
     	}
     	if(mSoundOnKeyPress)
     	{
@@ -1046,10 +1064,14 @@ public class SoftKeyboard extends InputMethodService
 
 	public void appendCharactersToInput(CharSequence textToCommit) 
 	{
-		handleTextDirection();
 		mWordComposer.append(textToCommit);
         //mComposing.append(textToCommit);
-        
+		appendStringToInput(textToCommit);
+	}
+
+	private void appendStringToInput(CharSequence textToCommit) {
+		handleTextDirection();
+		
         if (mCompletionOn)
         {
         	getCurrentInputConnection().setComposingText(mWordComposer.getTypedWord(), textToCommit.length());
