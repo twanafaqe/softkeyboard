@@ -29,6 +29,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.inputmethodservice.Keyboard.Key;
 import android.media.AudioManager;
 import android.os.Debug;
 import android.os.Handler;
@@ -67,12 +68,12 @@ public class AnySoftKeyboard extends InputMethodService
     
     //private static final int KEYBOARD_NOTIFICATION_ID = 1;
     
-    private static final String PREF_VIBRATE_ON = "vibrate_on";
-    private static final String PREF_SOUND_ON = "sound_on";
-    private static final String PREF_AUTO_CAP = "auto_cap";
-    private static final String PREF_QUICK_FIXES = "quick_fixes";
-    private static final String PREF_SHOW_SUGGESTIONS = "show_suggestions";
-    private static final String PREF_AUTO_COMPLETE = "auto_complete";
+//    private static final String PREF_VIBRATE_ON = "vibrate_on";
+//    private static final String PREF_SOUND_ON = "sound_on";
+//    private static final String PREF_AUTO_CAP = "auto_cap";
+//    private static final String PREF_QUICK_FIXES = "quick_fixes";
+//    private static final String PREF_SHOW_SUGGESTIONS = "show_suggestions";
+//    private static final String PREF_AUTO_COMPLETE = "auto_complete";
 
     private static final int MSG_UPDATE_SUGGESTIONS = 0;
     //private static final int MSG_START_TUTORIAL = 1;
@@ -168,6 +169,7 @@ public class AnySoftKeyboard extends InputMethodService
     @Override public void onCreate() {
         super.onCreate();
         //setStatusIcon(R.drawable.ime_qwerty);
+        loadSettings();
         mKeyboardSwitcher = new KeyboardSwitcher(this);
         initSuggest(/*getResources().getConfiguration().locale.toString()*/);
         
@@ -219,15 +221,15 @@ public class AnySoftKeyboard extends InputMethodService
         mInputView = (AnyKeyboardView)getLayoutInflater().inflate(R.layout.input, null);
         
         mKeyboardSwitcher.setInputView(mInputView);
-        mKeyboardSwitcher.makeKeyboards();
+        mKeyboardSwitcher.makeKeyboards(false);
         mInputView.setOnKeyboardActionListener(this);
-        mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT, 0);
+        mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT, null);
         return mInputView;
     }
 
     @Override
     public View onCreateCandidatesView() {
-        mKeyboardSwitcher.makeKeyboards();
+        mKeyboardSwitcher.makeKeyboards(false);
         mCandidateViewContainer = (CandidateViewContainer) getLayoutInflater().inflate(R.layout.candidates, null);
         mCandidateViewContainer.initViews();
         mCandidateView = (CandidateView) mCandidateViewContainer.findViewById(R.id.candidates);
@@ -242,8 +244,8 @@ public class AnySoftKeyboard extends InputMethodService
         if (mInputView == null) {
             return;
         }
-
-        mKeyboardSwitcher.makeKeyboards();
+        
+        mKeyboardSwitcher.makeKeyboards(false);
         
         TextEntryState.newSession(this);
         
@@ -255,16 +257,16 @@ public class AnySoftKeyboard extends InputMethodService
             case EditorInfo.TYPE_CLASS_NUMBER:
             case EditorInfo.TYPE_CLASS_DATETIME:
                 mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_SYMBOLS,
-                        attribute.imeOptions);
+                        attribute);
                 //mKeyboardSwitcher.toggleSymbols();
                 break;
             case EditorInfo.TYPE_CLASS_PHONE:
                 mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_PHONE,
-                        attribute.imeOptions);
+                        attribute);
                 break;
             case EditorInfo.TYPE_CLASS_TEXT:
                 mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT,
-                        attribute.imeOptions);
+                        attribute);
                 //startPrediction();
                 mPredictionOn = true;
                 // Make sure that passwords are not displayed in candidate view
@@ -282,14 +284,14 @@ public class AnySoftKeyboard extends InputMethodService
                 if (variation == EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
                     mPredictionOn = false;
                     mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_EMAIL,
-                            attribute.imeOptions);
+                            attribute);
                 } else if (variation == EditorInfo.TYPE_TEXT_VARIATION_URI) {
                     mPredictionOn = false;
                     mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_URL,
-                            attribute.imeOptions);
+                            attribute);
                 } else if (variation == EditorInfo.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
                     mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_IM,
-                            attribute.imeOptions);
+                            attribute);
                 } else if (variation == EditorInfo.TYPE_TEXT_VARIATION_FILTER) {
                     mPredictionOn = false;
                 }
@@ -301,7 +303,7 @@ public class AnySoftKeyboard extends InputMethodService
                 break;
             default:
                 mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_TEXT,
-                        attribute.imeOptions);
+                        attribute);
                 updateShiftKeyState(attribute);
         }
         mInputView.closing();
@@ -310,7 +312,8 @@ public class AnySoftKeyboard extends InputMethodService
         //mDeleteCount = 0;
         setCandidatesViewShown(false);
         if (mCandidateView != null) mCandidateView.setSuggestions(null, false, false, false);
-        loadSettings();
+        //loadSettings();
+        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
         mInputView.setProximityCorrectionEnabled(true);
         if (mSuggest != null) {
             mSuggest.setCorrectionMode(mCorrectionMode);
@@ -658,9 +661,10 @@ public class AnySoftKeyboard extends InputMethodService
                 mWord.reset();
             }
         }
-        if (mInputView.isShifted()) {
-            primaryCode = Character.toUpperCase(primaryCode);
-        }
+        primaryCode = translatePrimaryCodeFromCurrentKeyboard(primaryCode);
+//        if (mInputView.isShifted()) {
+//            primaryCode = Character.toUpperCase(primaryCode);
+//        }
         if (mPredicting) {
             if (mInputView.isShifted() && mComposing.length() == 0) {
                 mWord.setCapitalized(true);
@@ -679,6 +683,34 @@ public class AnySoftKeyboard extends InputMethodService
         //measureCps();
         TextEntryState.typedCharacter((char) primaryCode, isWordSeparator(primaryCode));
     }
+    
+	private int translatePrimaryCodeFromCurrentKeyboard(int primaryCode) 
+	{
+		Log.d("AnySoftKeyboard", "translatePrimaryCodeFromCurrentKeyboard: "+primaryCode);
+		if (isInputViewShown()) 
+	    {
+			Log.v("AnySoftKeyboard", "translatePrimaryCodeFromCurrentKeyboard: isInputViewShown");
+	        if (mInputView.isShifted()) 
+	        {
+	        	Log.d("AnySoftKeyboard", "translatePrimaryCodeFromCurrentKeyboard: mInputView.isShifted()");
+	        	for(Key aKey : mKeyboardSwitcher.getCurrentKeyboard().getKeys())
+	        	{
+	        		final int[] aKeyCodes = aKey.codes;
+	        		if (aKeyCodes[0] == primaryCode)
+	        		{
+	        			if (aKeyCodes.length > 1)
+	                		return aKeyCodes[1];//keyboard specified the shift character
+	        			else
+	        				return Character.toUpperCase(primaryCode);
+	        		}
+	        	}
+	        	//if I got here, then I'm shifted, and couldn't locate the key
+	        	//Is it pop-up?
+	        	return Character.toUpperCase(primaryCode);
+	        }
+	    }
+		return primaryCode;
+	}
 
     private void handleSeparator(int primaryCode) {
         boolean pickedDefault = false;
@@ -895,12 +927,12 @@ public class AnySoftKeyboard extends InputMethodService
     public boolean isWordSeparator(int code) {
         //String separators = getWordSeparators();
         //return separators.contains(String.valueOf((char)code));
-    	return isAlphabet(code);
+    	return !isAlphabet(code);
     }
 
     public boolean isSentenceSeparator(int code) {
         //return mSentenceSeparators.contains(String.valueOf((char)code));
-    	return isAlphabet(code);
+    	return !isAlphabet(code);
     }
 
     private void sendSpace() {
@@ -1101,15 +1133,15 @@ public class AnySoftKeyboard extends InputMethodService
     private void loadSettings() {
         // Get the settings preferences
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        mVibrateOn = sp.getBoolean(PREF_VIBRATE_ON, false);
-        mSoundOn = sp.getBoolean(PREF_SOUND_ON, false);
-        mAutoCap = sp.getBoolean(PREF_AUTO_CAP, true);
-        mQuickFixes = sp.getBoolean(PREF_QUICK_FIXES, true);
-        // If there is no auto text data, then quickfix is forced to "on", so that the other options
-        // will continue to work
-        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
-        mShowSuggestions = sp.getBoolean(PREF_SHOW_SUGGESTIONS, true) & mQuickFixes;
-        mAutoComplete = sp.getBoolean(PREF_AUTO_COMPLETE, true) & mShowSuggestions;
+        mVibrateOn = sp.getBoolean("vibrate_on", false);
+        mSoundOn = sp.getBoolean("sound_on", false);
+        mAutoCap = sp.getBoolean("auto_caps", true);
+        mQuickFixes = true;//sp.getBoolean(PREF_QUICK_FIXES, true);
+//        // If there is no auto text data, then quickfix is forced to "on", so that the other options
+//        // will continue to work
+//        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
+        mShowSuggestions = sp.getBoolean("candidates_on", true) & mQuickFixes;
+        mAutoComplete = true /*sp.getBoolean(PREF_AUTO_COMPLETE, true)*/ & mShowSuggestions;
         mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
         mCorrectionMode = mAutoComplete ? 2 : (mQuickFixes ? 1 : 0);
         
@@ -1202,7 +1234,8 @@ public class AnySoftKeyboard extends InputMethodService
 			String key) {
 		Log.d("AnySoftKeyboard", "onSharedPreferenceChanged - key:"+key);
 		
-		mKeyboardSwitcher.makeKeyboards();
+		loadSettings();
+		mKeyboardSwitcher.makeKeyboards(true);//maybe a new keyboard
 	}
 
     public void appendCharactersToInput(CharSequence textToCommit) 

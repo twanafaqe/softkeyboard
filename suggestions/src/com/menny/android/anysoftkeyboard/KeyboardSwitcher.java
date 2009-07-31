@@ -73,14 +73,14 @@ public class KeyboardSwitcher
         mInputView = inputView;
     }
     
-    void makeKeyboards() {
+    void makeKeyboards(boolean force) {
         // Configuration change is coming after the keyboard gets recreated. So don't rely on that.
         // If keyboards have already been made, check if we have a screen width change and 
         // create the keyboard layouts again at the correct orientation
         if ((mKeyboards != null) || (mSymbolsKeyboards != null)) 
         {
             int displayWidth = mContext.getMaxWidth();
-            if (displayWidth == mLastDisplayWidth) return;
+            if ((!force) && (displayWidth == mLastDisplayWidth)) return;
             mLastDisplayWidth = displayWidth;
         }
         // Delayed creation when keyboard mode is set.
@@ -88,42 +88,42 @@ public class KeyboardSwitcher
         mKeyboards = null;
     }
 
-    void setKeyboardMode(int mode, int imeOptions) {
+    void setKeyboardMode(int mode, EditorInfo attr) {
         //mMode = mode;
-        mImeOptions = imeOptions;
+        mImeOptions = (attr == null)? 0 : attr.imeOptions;
         AnyKeyboard keyboard = (AnyKeyboard) mInputView.getKeyboard();
         mInputView.setPreviewEnabled(true);
         //creating what needed.
+        //creating keyboards if needed (it is lazy enough)
+        if (mKeyboards == null)
+    		mKeyboards = KeyboardFactory.createAlphaBetKeyboards(mContext);
+        if (mSymbolsKeyboards == null)
+        {
+        	mSymbolsKeyboards = new AnyKeyboard[3];
+        	mSymbolsKeyboards[0] = new GenericKeyboard(mContext, R.xml.symbols, false, -1); 
+        	mSymbolsKeyboards[1] = new GenericKeyboard(mContext, R.xml.symbols_shift, false, -1);
+        	mSymbolsKeyboards[2] = new GenericKeyboard(mContext, R.xml.simple_numbers, false, -1);
+        }
         
         switch (mode) {
             case MODE_TEXT:
             case MODE_URL:
             case MODE_EMAIL:
             case MODE_IM:
-            	if (mKeyboards == null)
-            		mKeyboards = KeyboardFactory.createAlphaBetKeyboards(mContext);
-            	
             	keyboard = mKeyboards.get(mLastSelectedKeyboard);
             	break;
             case MODE_SYMBOLS:
             case MODE_PHONE:
-                if (mSymbolsKeyboards == null)
-                {
-                	mSymbolsKeyboards = new AnyKeyboard[3];
-                	mSymbolsKeyboards[0] = new GenericKeyboard(mContext, R.xml.symbols, false, -1); 
-                	mSymbolsKeyboards[1] = new GenericKeyboard(mContext, R.xml.symbols_shift, false, -1);
-                	mSymbolsKeyboards[2] = new GenericKeyboard(mContext, R.xml.simple_numbers, false, -1);
-                }
-                
                 keyboard = (mode == MODE_PHONE)?
                 		mSymbolsKeyboards[PHONE_KEYBOARD_INDEX]
                 		: mSymbolsKeyboards[0];
                 break;
         }
         mInputView.setKeyboard(keyboard);
-        keyboard.setShifted(false);
+        keyboard.setShifted(mInputView.isShifted());
         keyboard.setShiftLocked(keyboard.isShiftLocked());
-        keyboard.setImeOptions(mContext.getResources()/*, mMode*/, imeOptions);
+        keyboard.setImeOptions(mContext.getResources()/*, mMode*/, (attr == null)? 0 : attr.imeOptions);
+        keyboard.setTextVariation(mContext.getResources(), (attr == null)? 0 : attr.inputType);
     }
 
 //    int getKeyboardMode() {
@@ -200,6 +200,8 @@ public class KeyboardSwitcher
     			mLastSelectedKeyboard = 0;
     	}
     	current = mKeyboards.get(mLastSelectedKeyboard);
+    	//returning to the regular symbols keyboard, no matter what
+    	mLastSelectedSymbolsKeyboard = 0;
     	
     	return setKeyboard(currentEditorInfo, current);
     }
@@ -222,7 +224,8 @@ public class KeyboardSwitcher
 			AnyKeyboard current) {
 		mInputView.setKeyboard(current);
     	//all keyboards start as un-shifted, except the second symbols
-    	current.setShifted(current == mSymbolsKeyboards[1]);
+		//due to lazy loading the keyboards, the symbols may not be created yet.
+    	current.setShifted((mSymbolsKeyboards != null) && (current == mSymbolsKeyboards[1]));
     	
     	current.setImeOptions(mContext.getResources(), currentEditorInfo.imeOptions);
     	current.setTextVariation(mContext.getResources(), currentEditorInfo.inputType);

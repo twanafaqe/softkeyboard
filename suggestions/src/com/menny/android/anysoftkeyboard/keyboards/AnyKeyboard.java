@@ -179,6 +179,7 @@ public abstract class AnyKeyboard extends Keyboard
      * appropriate label on the keyboard's enter key (if it has one).
      */
     public void setImeOptions(Resources res, int options) {
+    	Log.d("AnySoftKeyboard", "AnyKeyboard.setImeOptions");
         if (mEnterKey == null) {
             return;
         }
@@ -369,6 +370,7 @@ public abstract class AnyKeyboard extends Keyboard
 
 	public void setTextVariation(Resources res, int inputType) 
 	{
+		Log.d("AnySoftKeyboard", "AnyKeyboard.setImeOptions");
 		int variation = inputType &  EditorInfo.TYPE_MASK_VARIATION;
 		//if ((keyboardType == NextKeyboardType.Any) && 
 		//		mInternetKeyboard.isEnabled() &&
