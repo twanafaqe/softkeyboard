@@ -23,7 +23,20 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-    <string name="physical_keyboard_change_notification">Notify on physical layout change</string>
+    <string name="physical_keyboard_change_notification_title">Keyboard layout notification</string>
+    <string name="physical_keyboard_change_notification_summary">Type of notification about the active layout</string>
+    <string name="physical_keyboard_change_notification_dialog_title">Select notification type</string>
+    <string-array name="physical_keyboard_change_notification_types">
+        <item>Always show layout icon</item>
+        <item>Show short layout notification</item>
+        <item>No notification</item>
+    </string-array>
+    <string-array name="physical_keyboard_change_notification_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <!-- <string name="physical_keyboard_change_notification">Notify on physical layout change</string>-->
     
     <!-- settings - effects-->
     <string name="effects_group">Effects</string>

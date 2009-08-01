@@ -19,22 +19,13 @@ package com.menny.android.anysoftkeyboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.app.*;
+import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
+import android.inputmethodservice.*;
 import android.inputmethodservice.Keyboard.Key;
 import android.media.AudioManager;
-import android.os.Debug;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Vibrator;
+import android.os.*;
 import android.preference.PreferenceManager;
 import android.text.AutoText;
 import android.text.TextUtils;
@@ -45,7 +36,9 @@ import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import com.menny.android.anysoftkeyboard.KeyboardSwitcher.NextKeyboardType;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
+import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
 
 /**
  * Input method implementation for Qwerty'ish keyboard.
@@ -66,7 +59,6 @@ public class AnySoftKeyboard extends InputMethodService
     static final boolean DEBUG = false;
     static final boolean TRACE = false;
     
-    //private static final int KEYBOARD_NOTIFICATION_ID = 1;
     
 //    private static final String PREF_VIBRATE_ON = "vibrate_on";
 //    private static final String PREF_SOUND_ON = "sound_on";
@@ -85,6 +77,8 @@ public class AnySoftKeyboard extends InputMethodService
     
     private static final int KEYCODE_ENTER = 10;
     private static final int KEYCODE_SPACE = ' ';
+	private static final int KEYBOARD_NOTIFICATION_ID = 1;
+	private final String SENTENCE_SEPERATORS = ".\n!?";
 
     // Contextual menu positions
     //private static final int POS_SETTINGS = 0;
@@ -122,6 +116,7 @@ public class AnySoftKeyboard extends InputMethodService
     private boolean mShowSuggestions;
     private boolean mAutoComplete;
     private int     mCorrectionMode;
+	private String mKeyboardChangeNotificationType;
     
     public static String mChangeKeysMode;
     
@@ -330,6 +325,12 @@ public class AnySoftKeyboard extends InputMethodService
         if (mInputView != null) {
             mInputView.closing();
         }
+        
+        if (!mKeyboardChangeNotificationType.equals("1"))
+        {
+        	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+        }
     }
 
     @Override
@@ -399,13 +400,13 @@ public class AnySoftKeyboard extends InputMethodService
         }
     }
 
-    @Override
-    public void setCandidatesViewShown(boolean shown) {
-        // TODO: Remove this if we support candidates with hard keyboard
-        if (onEvaluateInputViewShown()) {
-            super.setCandidatesViewShown(shown);
-        }
-    }
+//    @Override
+//    public void setCandidatesViewShown(boolean shown) {
+//        // TODO: Remove this if we support candidates with hard keyboard
+//        if (onEvaluateInputViewShown()) {
+//            super.setCandidatesViewShown(shown);
+//        }
+//    }
     
     @Override
     public void onComputeInsets(InputMethodService.Insets outInsets) {
@@ -416,8 +417,10 @@ public class AnySoftKeyboard extends InputMethodService
     }
     
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) 
+    {
+        switch (keyCode) 
+        {
             case KeyEvent.KEYCODE_BACK:
                 if (event.getRepeatCount() == 0 && mInputView != null) {
                     if (mInputView.handleBack()) {
@@ -437,9 +440,110 @@ public class AnySoftKeyboard extends InputMethodService
 //                    return true;
 //                }
 //                break;
-        }
-        return super.onKeyDown(keyCode, event);
+          default:
+			// For all other keys, if we want to do transformations on
+			// text being entered with a hard keyboard, we need to process
+        	// it and do the appropriate action.
+			// using physical keyboard is more annoying with candidate view in the way
+			// so we disable it.
+			mCompletionOn = false;
+			
+			if ((keyCode == KeyEvent.KEYCODE_SPACE && (event.getMetaState()&KeyEvent.META_ALT_ON) != 0) 
+				|| ((keyCode == KeyEvent.KEYCODE_ALT_LEFT || keyCode == KeyEvent.KEYCODE_ALT_RIGHT) && (event.getMetaState()&KeyEvent.META_SHIFT_ON) != 0))
+			{
+			      InputConnection ic = getCurrentInputConnection();
+			      if (ic != null) 
+			      {
+			          // First, tell the editor that it is no longer in the
+				      // shift state, since we are consuming this.
+				      ic.clearMetaKeyStates(KeyEvent.META_ALT_ON | KeyEvent.META_SHIFT_ON);
+				      //only physical keyboard
+			          nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.AlphabetSupportsPhysical);
+			          notifyKeyboardChangeIfNeeded();
+			          
+			          return true;
+			      }
+			}
+			else if(mKeyboardSwitcher.isCurrentKeyboardPhysical())
+			{
+				AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
+				Log.d("AnySoftKeyborad", "Asking '"+current.getKeyboardName()+"' to translate key: "+keyCode);
+				char translatedChar = ((HardKeyboardTranslator)current).translatePhysicalCharacter(keyCode, event.getMetaState());
+				if (translatedChar != 0)
+				{
+					//consuming the meta keys
+					InputConnection ic = getCurrentInputConnection();
+					if (ic != null) 
+					{
+					  	ic.clearMetaKeyStates(event.getMetaState());
+					}
+					Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' translated key "+keyCode+" to "+translatedChar);
+					onKey(translatedChar, new int[]{translatedChar});
+					return true;
+				}
+				else
+				{
+					Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' did not translated key "+keyCode+".");
+				}
+			}
+			break;
+      	}
+        return super.onKeyDown(keyCode, event);        
     }
+    
+//    private void keyDownUp(int keyEventCode) {
+//        getCurrentInputConnection().sendKeyEvent(
+//                new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
+//        getCurrentInputConnection().sendKeyEvent(
+//                new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
+//    }
+//    
+//    private void sendKey(int keyCode) 
+//    {
+//    	switch (keyCode) {
+//	      case '\n':
+//	          keyDownUp(KeyEvent.KEYCODE_ENTER);
+//	          break;
+//	      case ' '://testing
+//	    	  keyDownUp(KeyEvent.KEYCODE_SPACE);
+//	          break;
+//	      default:
+//	          if (keyCode >= '0' && keyCode <= '9') {
+//	              keyDownUp(keyCode - '0' + KeyEvent.KEYCODE_0);
+//	          } else {
+//	          	mComposing.append((char) keyCode);
+//	          	mWord.add(keyCode, new int[]{keyCode});
+//	          	commitTyped(getCurrentInputConnection());
+//	          }
+//	          break;
+//    	}
+//	}
+
+	private void notifyKeyboardChangeIfNeeded() 
+	{
+		
+		if (!mKeyboardChangeNotificationType.equals("3"))
+		{
+			AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
+			//notifying the user about the keyboard. This should be done in open keyboard only.
+			//getting the manager
+			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			//removing last notification
+			notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+			//creating the message
+			Notification notification = new Notification(current.getKeyboardIcon(), current.getKeyboardName(), System.currentTimeMillis());
+	
+			Intent notificationIntent = new Intent();
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+			
+			notification.setLatestEventInfo(getApplicationContext(), "Any Soft Keyboard", current.getKeyboardName(), contentIntent);
+			notification.flags |= Notification.FLAG_ONGOING_EVENT;
+			notification.flags |= Notification.FLAG_NO_CLEAR;
+			notification.defaults = 0;//no sound, vibrate, etc.
+			//notifying
+			notificationManager.notify(KEYBOARD_NOTIFICATION_ID, notification);
+		}
+	}
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -579,10 +683,10 @@ public class AnySoftKeyboard extends InputMethodService
                 }
                 break;
             case Keyboard.KEYCODE_MODE_CHANGE:
-                nextKeyboard(getCurrentInputEditorInfo(), false);
+                nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.Symbols);
                 break;
             case AnyKeyboard.KEYCODE_LANG_CHANGE:
-                nextKeyboard(getCurrentInputEditorInfo(), true);
+                nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.Alphabet);
                 break;
             default:
                 if (isWordSeparator(primaryCode)) {
@@ -931,8 +1035,7 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     public boolean isSentenceSeparator(int code) {
-        //return mSentenceSeparators.contains(String.valueOf((char)code));
-    	return !isAlphabet(code);
+        return SENTENCE_SEPERATORS.contains(String.valueOf((char)code));
     }
 
     private void sendSpace() {
@@ -960,7 +1063,7 @@ public class AnySoftKeyboard extends InputMethodService
     	}
     	else
     	{
-    		nextKeyboard(getCurrentInputEditorInfo(), true);
+    		nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.Alphabet);
     	}
     }
 
@@ -972,13 +1075,13 @@ public class AnySoftKeyboard extends InputMethodService
     	}
     	else
     	{
-    		nextKeyboard(getCurrentInputEditorInfo(), false);
+    		nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.Symbols);
     	}
     }
 
-	private void nextKeyboard(EditorInfo currentEditorInfo, boolean alphabet) 
+	private void nextKeyboard(EditorInfo currentEditorInfo, KeyboardSwitcher.NextKeyboardType type) 
 	{
-		Log.d("AnySoftKeyboard", "nextKeyboard: currentEditorInfo.inputType="+currentEditorInfo.inputType+" alphabet:"+alphabet);
+		Log.d("AnySoftKeyboard", "nextKeyboard: currentEditorInfo.inputType="+currentEditorInfo.inputType+" type:"+type);
 		
 		AnyKeyboard currentKeyboard = mKeyboardSwitcher.getCurrentKeyboard();
 		if (currentKeyboard == null)
@@ -992,9 +1095,7 @@ public class AnySoftKeyboard extends InputMethodService
 		//in numeric keyboards, the LANG key will go back to the original alphabet keyboard-
 		//so no need to look for the next keyboard, 'mLastSelectedKeyboard' holds the last
 		//keyboard used.
-		currentKeyboard = alphabet?
-				mKeyboardSwitcher.nextAlphabetKeyboard(currentEditorInfo)
-				: mKeyboardSwitcher.nextSymbolsKeyboard(currentEditorInfo);
+		currentKeyboard = mKeyboardSwitcher.nextKeyboard(currentEditorInfo, type);
 		
 		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "+currentKeyboard.getKeyboardName());
 		updateShiftKeyState(currentEditorInfo);
@@ -1135,6 +1236,18 @@ public class AnySoftKeyboard extends InputMethodService
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         mVibrateOn = sp.getBoolean("vibrate_on", false);
         mSoundOn = sp.getBoolean("sound_on", false);
+        //in order to support the old type of configuration
+        boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
+        mKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "");
+        if (mKeyboardChangeNotificationType.equals(""))
+        {//no data, maybe old data exists.
+        	mKeyboardChangeNotificationType = oldNotificationEnabled?
+        			"1" : "3";
+        }
+        //now clearing the notification, and it will be re-shown if needed
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+    	
         mAutoCap = sp.getBoolean("auto_caps", true);
         mQuickFixes = true;//sp.getBoolean(PREF_QUICK_FIXES, true);
 //        // If there is no auto text data, then quickfix is forced to "on", so that the other options

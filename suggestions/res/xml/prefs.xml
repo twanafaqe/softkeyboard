@@ -14,14 +14,22 @@
                 android:defaultValue=""
                 android:dialogTitle="@string/keyboard_layout_change_method_dialog_title"/>
                 
-	            <CheckBoxPreference
+                <ListPreference
+                android:key="physical_keyboard_change_notification_type"
+                android:title="@string/physical_keyboard_change_notification_title"
+                android:summary="@string/physical_keyboard_change_notification_summary"
+                android:entries="@array/physical_keyboard_change_notification_types"
+                android:entryValues="@array/physical_keyboard_change_notification_values"
+                android:defaultValue=""
+                android:dialogTitle="@string/physical_keyboard_change_notification_dialog_title"/>
+	            <!-- <CheckBoxPreference
 	            android:key="physical_keyboard_change_notification"
 	            android:title="@string/physical_keyboard_change_notification"
 	            android:persistent="true" 
 	            android:defaultValue="true"
 	            android:summaryOff=""
 	            android:summaryOn="Show notification on physical keyboard change"
-	            />
+	            />-->
             </PreferenceCategory>
    		 	<PreferenceCategory android:key="effects_group"
             android:title="@string/effects_group">
