@@ -1,6 +1,8 @@
 
 package com.menny.android.anysoftkeyboard.keyboards;
 
+import java.util.HashMap;
+
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.inputmethodservice.Keyboard;
@@ -35,6 +37,7 @@ public abstract class AnyKeyboard extends Keyboard
 	private final String mKeyboardName;
     private final boolean mLeftToRightLanguageDirection;
 	//private final String mKeyboardPrefId;
+    private final HashMap<Character, Character> mSpecialShiftKeys = new HashMap<Character, Character>();
     
 //    private Drawable mShiftLockIcon;
 //    private Drawable mShiftLockPreviewIcon;
@@ -148,6 +151,18 @@ public abstract class AnyKeyboard extends Keyboard
         
         setPopupKeyChars(key);
         
+        if ((key.codes != null) && (key.codes.length > 1))
+        {
+        	int primaryCode = key.codes[0];
+        	if ((primaryCode>0) && (primaryCode<Character.MAX_VALUE))
+        	{
+        		Character primary = new Character((char)primaryCode);
+	        	char shifted = (char)key.codes[1];
+	        	if (!mSpecialShiftKeys.containsKey(primary))
+	        		mSpecialShiftKeys.put(primary, new Character(shifted));
+	        	Log.v("AnySoftKeyboard", "Adding mapping ("+primary+"->"+shifted+") to mSpecialShiftKeys.");
+	        }
+        }
         return key;
     }
 
@@ -501,4 +516,20 @@ public abstract class AnyKeyboard extends Keyboard
 					clickedY <= endY;
 		}
     }
+
+	public int getShiftedKeyValue(int primaryCode) 
+	{
+		if ((primaryCode>0) && (primaryCode<Character.MAX_VALUE))
+		{
+			Character c = new Character((char)primaryCode);
+			if (mSpecialShiftKeys.containsKey(c))
+			{
+				char shifted = mSpecialShiftKeys.get(c).charValue();
+				Log.v("AnySoftKeyboard", "Returned the shifted mapping ("+c+"->"+shifted+") from mSpecialShiftKeys.");
+				return shifted;
+			}
+		}
+		//else...best try.
+		return Character.toUpperCase(primaryCode);
+	}
 }

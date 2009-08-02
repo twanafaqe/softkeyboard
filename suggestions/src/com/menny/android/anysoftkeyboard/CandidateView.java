@@ -219,7 +219,7 @@ public class CandidateView extends View {
 
 	        for (int i = 0; i < count; i++) {
 	            CharSequence suggestion = mSuggestions.get(i);
-	            if (suggestion == null) continue;
+	            if ((suggestion == null) || (suggestion.length() == 0)) continue;
 	            paint.setColor(mColorNormal);
 	            if (mHaveMinimalSuggestion 
 	                    && ((i == 1 && !typedWordValid) || (i == 0 && typedWordValid))) {
@@ -253,7 +253,9 @@ public class CandidateView extends View {
 	            }
 
 	            if (canvas != null) {
-	                canvas.drawText(suggestion, 0, suggestion.length(), x + X_GAP, y, paint);
+	            	//Hebrew letters are to be drawn in the other direction
+	            	CharSequence directionCorrectedSuggestion = correctStringDirection(suggestion);
+	                canvas.drawText(directionCorrectedSuggestion, 0, directionCorrectedSuggestion.length(), x + X_GAP, y, paint);
 	                paint.setColor(mColorOther);
 	                canvas.translate(x + wordWidth, 0);
 	                mDivider.draw(canvas);
@@ -268,7 +270,28 @@ public class CandidateView extends View {
 	        }
 	    }
 	    
-	    private void scrollToTarget() {
+	    private CharSequence correctStringDirection(CharSequence suggestion) 
+	    {
+	    	final byte direction = Character.getDirectionality(suggestion.charAt(0));
+	    	//Log.d("AnySoftKeyboard", "CandidateView: correctStringDirection: direction:"+direction+" char:"+suggestion.charAt(0));
+			switch(direction)
+			{
+			case Character.DIRECTIONALITY_RIGHT_TO_LEFT:
+			case Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
+			case Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
+			case Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
+				String reveresed = "";
+				for(int charIndex = suggestion.length() - 1; charIndex>=0; charIndex--)
+				{
+					reveresed = reveresed + suggestion.charAt(charIndex);
+				}
+				//Log.d("AnySoftKeyboard", "CandidateView: correctStringDirection: reversed "+suggestion+" to "+reveresed);
+				return reveresed;
+			}
+			return suggestion;
+		}
+
+		private void scrollToTarget() {
 	        if (mTargetScrollX > mScrollX) {
 	            mScrollX += SCROLL_PIXELS;
 	            if (mScrollX >= mTargetScrollX) {

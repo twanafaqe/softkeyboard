@@ -23,7 +23,6 @@ import android.app.*;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.inputmethodservice.*;
-import android.inputmethodservice.Keyboard.Key;
 import android.media.AudioManager;
 import android.os.*;
 import android.preference.PreferenceManager;
@@ -400,13 +399,13 @@ public class AnySoftKeyboard extends InputMethodService
         }
     }
 
-//    @Override
-//    public void setCandidatesViewShown(boolean shown) {
-//        // TODO: Remove this if we support candidates with hard keyboard
-//        if (onEvaluateInputViewShown()) {
-//            super.setCandidatesViewShown(shown);
-//        }
-//    }
+    @Override
+    public void setCandidatesViewShown(boolean shown) {
+        // TODO: Remove this if we support candidates with hard keyboard
+        if (onEvaluateInputViewShown()) {
+            super.setCandidatesViewShown(shown);
+        }
+    }
     
     @Override
     public void onComputeInsets(InputMethodService.Insets outInsets) {
@@ -468,22 +467,32 @@ public class AnySoftKeyboard extends InputMethodService
 			{
 				AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
 				Log.d("AnySoftKeyborad", "Asking '"+current.getKeyboardName()+"' to translate key: "+keyCode);
-				char translatedChar = ((HardKeyboardTranslator)current).translatePhysicalCharacter(keyCode, event.getMetaState());
-				if (translatedChar != 0)
+				//sometimes, the physical keyboard will delete input, and add some.
+				//we'll try to make it nice
+				InputConnection ic = getCurrentInputConnection();
+				ic.beginBatchEdit();
+				try
 				{
-					//consuming the meta keys
-					InputConnection ic = getCurrentInputConnection();
-					if (ic != null) 
+					char translatedChar = ((HardKeyboardTranslator)current).translatePhysicalCharacter(keyCode, event.getMetaState());
+					if (translatedChar != 0)
 					{
-					  	ic.clearMetaKeyStates(event.getMetaState());
+						//consuming the meta keys
+						if (ic != null) 
+						{
+						  	ic.clearMetaKeyStates(event.getMetaState());
+						}
+						Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' translated key "+keyCode+" to "+translatedChar);
+						onKey(translatedChar, new int[]{translatedChar});
+						return true;
 					}
-					Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' translated key "+keyCode+" to "+translatedChar);
-					onKey(translatedChar, new int[]{translatedChar});
-					return true;
+					else
+					{
+						Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' did not translated key "+keyCode+".");
+					}
 				}
-				else
+				finally
 				{
-					Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' did not translated key "+keyCode+".");
+					ic.endBatchEdit();
 				}
 			}
 			break;
@@ -797,20 +806,21 @@ public class AnySoftKeyboard extends InputMethodService
 	        if (mInputView.isShifted()) 
 	        {
 	        	Log.d("AnySoftKeyboard", "translatePrimaryCodeFromCurrentKeyboard: mInputView.isShifted()");
-	        	for(Key aKey : mKeyboardSwitcher.getCurrentKeyboard().getKeys())
-	        	{
-	        		final int[] aKeyCodes = aKey.codes;
-	        		if (aKeyCodes[0] == primaryCode)
-	        		{
-	        			if (aKeyCodes.length > 1)
-	                		return aKeyCodes[1];//keyboard specified the shift character
-	        			else
-	        				return Character.toUpperCase(primaryCode);
-	        		}
-	        	}
+	        	return mKeyboardSwitcher.getCurrentKeyboard().getShiftedKeyValue(primaryCode);
+//	        	for(Key aKey : mKeyboardSwitcher.getCurrentKeyboard().getKeys())
+//	        	{
+//	        		final int[] aKeyCodes = aKey.codes;
+//	        		if (aKeyCodes[0] == primaryCode)
+//	        		{
+//	        			if (aKeyCodes.length > 1)
+//	                		return aKeyCodes[1];//keyboard specified the shift character
+//	        			else
+//	        				return Character.toUpperCase(primaryCode);
+//	        		}
+//	        	}
 	        	//if I got here, then I'm shifted, and couldn't locate the key
 	        	//Is it pop-up?
-	        	return Character.toUpperCase(primaryCode);
+	        	//return Character.toUpperCase(primaryCode);
 	        }
 	    }
 		return primaryCode;

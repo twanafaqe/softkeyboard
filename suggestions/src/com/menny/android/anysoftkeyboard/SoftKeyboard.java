@@ -38,7 +38,10 @@ package com.menny.android.anysoftkeyboard;
 // * a basic example for how you would get started writing an input method, to
 // * be fleshed out as appropriate.
 // */
-//public class SoftKeyboard extends InputMethodService 
+public class SoftKeyboard extends AnySoftKeyboard
+{
+	
+}
 //        implements KeyboardView.OnKeyboardActionListener, OnSharedPreferenceChangeListener,
 //        AnyKeyboardContextProvider
 //    {
