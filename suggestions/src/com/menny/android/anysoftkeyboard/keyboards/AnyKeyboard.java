@@ -37,7 +37,7 @@ public abstract class AnyKeyboard extends Keyboard
 	private final String mKeyboardName;
     private final boolean mLeftToRightLanguageDirection;
 	//private final String mKeyboardPrefId;
-    private final HashMap<Character, Character> mSpecialShiftKeys = new HashMap<Character, Character>();
+    private HashMap<Character, Character> mSpecialShiftKeys;
     
 //    private Drawable mShiftLockIcon;
 //    private Drawable mShiftLockPreviewIcon;
@@ -66,7 +66,7 @@ public abstract class AnyKeyboard extends Keyboard
         	mKeyboardName = "";
         mLeftToRightLanguageDirection = leftToRightLanguageDirection;
         //mKeyboardPrefId = keyboardEnabledPref;
-        Log.i("AnySoftKeyboard", "Creating keyboard: "+mKeyboardName);
+        Log.i("AnySoftKeyboard", "Done creating keyboard: "+mKeyboardName);
     	
         //TODO: parsing of the mapping xml:
         //XmlResourceParser p = getResources().getXml(id from the constructor parameter);
@@ -87,6 +87,8 @@ public abstract class AnyKeyboard extends Keyboard
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, 
             XmlResourceParser parser) {
+    	if (mSpecialShiftKeys == null) mSpecialShiftKeys = new HashMap<Character, Character>();
+    	
         Key key = new AnyKey(res, parent, x, y, parser);
         
         if ((key.codes != null) && (key.codes.length > 0))
