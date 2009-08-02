@@ -16,6 +16,8 @@
 
 package com.menny.android.anysoftkeyboard;
 
+import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
+
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -43,7 +45,7 @@ public class AnyKeyboardView extends KeyboardView {
     
     @Override
     protected boolean onLongPress(Key key) {
-        if (key.codes[0] == Keyboard.KEYCODE_MODE_CHANGE) {
+        if (key.codes[0] == 10) {
             getOnKeyboardActionListener().onKey(KEYCODE_OPTIONS, null);
             return true;
         } else if (key.codes[0] == Keyboard.KEYCODE_SHIFT) {

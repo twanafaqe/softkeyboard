@@ -113,6 +113,8 @@ public class KeyboardSwitcher
         	mSymbolsKeyboardsArray[0] = new GenericKeyboard(mContext, R.xml.symbols, false, -1); 
         	mSymbolsKeyboardsArray[1] = new GenericKeyboard(mContext, R.xml.symbols_shift, false, -1);
         	mSymbolsKeyboardsArray[2] = new GenericKeyboard(mContext, R.xml.simple_numbers, false, -1);
+        	
+        	mInputView.setPhoneKeyboard(mSymbolsKeyboardsArray[PHONE_KEYBOARD_INDEX]);
         }
     }
 
