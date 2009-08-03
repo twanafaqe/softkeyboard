@@ -78,6 +78,8 @@ public class KeyboardSwitcher
 
     void setInputView(AnyKeyboardView inputView) {
         mInputView = inputView;
+        if ((mInputView != null) && (mSymbolsKeyboardsArray != null))
+    		mInputView.setPhoneKeyboard(mSymbolsKeyboardsArray[PHONE_KEYBOARD_INDEX]);
     }
     
     private AnyKeyboard[] getSymbolsKeyboards()
@@ -120,7 +122,8 @@ public class KeyboardSwitcher
         	if (mLastSelectedSymbolsKeyboard >= mSymbolsKeyboardsArray.length)
         		mLastSelectedSymbolsKeyboard = 0;
         	
-        	mInputView.setPhoneKeyboard(mSymbolsKeyboardsArray[PHONE_KEYBOARD_INDEX]);
+        	if (mInputView != null)
+        		mInputView.setPhoneKeyboard(mSymbolsKeyboardsArray[PHONE_KEYBOARD_INDEX]);
         }
     }
 

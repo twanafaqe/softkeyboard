@@ -1,5 +1,4 @@
 package com.menny.android.anysoftkeyboard;
-//package com.menny.android.anysoftkeyboard;
 //
 //import java.util.ArrayList;
 //import java.util.List;

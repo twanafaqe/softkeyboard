@@ -249,19 +249,22 @@ public class UserDictionary extends Dictionary {
     private void addWords(Cursor cursor) {
         mRoots = new ArrayList<Node>();
         
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String word = cursor.getString(INDEX_WORD);
-                int frequency = cursor.getInt(INDEX_FREQUENCY);
-                // Safeguard against adding really long words. Stack may overflow due
-                // to recursion
-                if (word.length() < MAX_WORD_LENGTH) {
-                    addWordRec(mRoots, word, 0, frequency);
-                }
-                cursor.moveToNext();
-            }
+        if (cursor != null)
+        {
+	        if (cursor.moveToFirst()) {
+	            while (!cursor.isAfterLast()) {
+	                String word = cursor.getString(INDEX_WORD);
+	                int frequency = cursor.getInt(INDEX_FREQUENCY);
+	                // Safeguard against adding really long words. Stack may overflow due
+	                // to recursion
+	                if (word.length() < MAX_WORD_LENGTH) {
+	                    addWordRec(mRoots, word, 0, frequency);
+	                }
+	                cursor.moveToNext();
+	            }
+	        }
+	        cursor.close();
         }
-        cursor.close();
     }
     
     private void addWordRec(List<Node> children, final String word, 
