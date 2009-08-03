@@ -124,6 +124,8 @@ public class KeyboardSwitcher
         	
         	if (mInputView != null)
         		mInputView.setPhoneKeyboard(mSymbolsKeyboardsArray[PHONE_KEYBOARD_INDEX]);
+        	//freeing old keyboards.
+        	System.gc();
         }
     }
 

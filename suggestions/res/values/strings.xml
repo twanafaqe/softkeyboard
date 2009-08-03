@@ -28,7 +28,7 @@
     <string name="physical_keyboard_change_notification_dialog_title">Select notification type</string>
     <string-array name="physical_keyboard_change_notification_types">
         <item>Always show layout icon</item>
-        <item>Show short layout notification</item>
+        <item>On physical keyboard change</item>
         <item>No notification</item>
     </string-array>
     <string-array name="physical_keyboard_change_notification_values">

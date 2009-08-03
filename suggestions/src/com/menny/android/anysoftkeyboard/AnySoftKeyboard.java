@@ -133,6 +133,7 @@ public class AnySoftKeyboard extends InputMethodService
     private AudioManager mAudioManager;
     //private final float FX_VOLUME = 1.0f;
     private boolean mSilentMode;
+    private NotificationManager mNotificationManager;
 
     //private String mWordSeparators;
     //private String mSentenceSeparators;
@@ -162,9 +163,13 @@ public class AnySoftKeyboard extends InputMethodService
 
     @Override public void onCreate() {
         super.onCreate();
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //setStatusIcon(R.drawable.ime_qwerty);
         loadSettings();
         mKeyboardSwitcher = new KeyboardSwitcher(this);
+        //should it be always on?
+		if (mKeyboardChangeNotificationType.equals("1"))
+			notifyKeyboardChangeIfNeeded();
         initSuggest(/*getResources().getConfiguration().locale.toString()*/);
         
         //mVibrateDuration = getResources().getInteger(R.integer.vibrate_duration_ms);
@@ -199,8 +204,19 @@ public class AnySoftKeyboard extends InputMethodService
         	mAudioManager.unloadSoundEffects();
 		}
 		
+		mNotificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+		
         super.onDestroy();
     }
+    
+    @Override
+    public void onFinishInputView(boolean finishingInput) 
+    {
+    	if (!mKeyboardChangeNotificationType.equals("1"))
+    	{
+    		mNotificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+    	}
+    };
 
 //    @Override
 //    public void onConfigurationChanged(Configuration conf) {
@@ -455,10 +471,9 @@ public class AnySoftKeyboard extends InputMethodService
 			      {
 			          // First, tell the editor that it is no longer in the
 				      // shift state, since we are consuming this.
-				      ic.clearMetaKeyStates(KeyEvent.META_ALT_ON | KeyEvent.META_SHIFT_ON);
+				      ic.clearMetaKeyStates(KeyEvent.META_ALT_ON);
 				      //only physical keyboard
 			          nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.AlphabetSupportsPhysical);
-			          notifyKeyboardChangeIfNeeded();
 			          
 			          return true;
 			      }
@@ -470,7 +485,8 @@ public class AnySoftKeyboard extends InputMethodService
 				//sometimes, the physical keyboard will delete input, and add some.
 				//we'll try to make it nice
 				InputConnection ic = getCurrentInputConnection();
-				ic.beginBatchEdit();
+				if (ic != null)
+					ic.beginBatchEdit();
 				try
 				{
 					char translatedChar = ((HardKeyboardTranslator)current).translatePhysicalCharacter(keyCode, event.getMetaState());
@@ -478,10 +494,10 @@ public class AnySoftKeyboard extends InputMethodService
 					{
 						//consuming the meta keys
 						if (ic != null) 
-						{
 						  	ic.clearMetaKeyStates(event.getMetaState());
-						}
+						
 						Log.d("AnySoftKeyborad", "'"+current.getKeyboardName()+"' translated key "+keyCode+" to "+translatedChar);
+						
 						onKey(translatedChar, new int[]{translatedChar});
 						return true;
 					}
@@ -492,7 +508,8 @@ public class AnySoftKeyboard extends InputMethodService
 				}
 				finally
 				{
-					ic.endBatchEdit();
+					if (ic != null)
+						ic.endBatchEdit();
 				}
 			}
 			break;
@@ -530,15 +547,17 @@ public class AnySoftKeyboard extends InputMethodService
 
 	private void notifyKeyboardChangeIfNeeded() 
 	{
+//		Log.d("anySoftKeyboard","notifyKeyboardChangeIfNeeded"); 
+//		Thread.dumpStack();
+		//removing last notification
+		mNotificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+		if (mKeyboardSwitcher == null)//happens on first onCreate.
+			return;
 		
 		if (!mKeyboardChangeNotificationType.equals("3"))
 		{
 			AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
-			//notifying the user about the keyboard. This should be done in open keyboard only.
-			//getting the manager
-			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			//removing last notification
-			notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+			//notifying the user about the keyboard.
 			//creating the message
 			Notification notification = new Notification(current.getKeyboardIcon(), current.getKeyboardName(), System.currentTimeMillis());
 	
@@ -546,11 +565,18 @@ public class AnySoftKeyboard extends InputMethodService
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 			
 			notification.setLatestEventInfo(getApplicationContext(), "Any Soft Keyboard", current.getKeyboardName(), contentIntent);
-			notification.flags |= Notification.FLAG_ONGOING_EVENT;
-			notification.flags |= Notification.FLAG_NO_CLEAR;
+			if (mKeyboardChangeNotificationType.equals("1"))
+			{
+				notification.flags |= Notification.FLAG_ONGOING_EVENT;
+				notification.flags |= Notification.FLAG_NO_CLEAR;
+			}
+			else
+			{
+				notification.flags |= Notification.FLAG_AUTO_CANCEL;
+			}
 			notification.defaults = 0;//no sound, vibrate, etc.
 			//notifying
-			notificationManager.notify(KEYBOARD_NOTIFICATION_ID, notification);
+			mNotificationManager.notify(KEYBOARD_NOTIFICATION_ID, notification);
 		}
 	}
 
@@ -1109,6 +1135,12 @@ public class AnySoftKeyboard extends InputMethodService
 		
 		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "+currentKeyboard.getKeyboardName());
 		updateShiftKeyState(currentEditorInfo);
+		//Notifying if needed
+		if ( (mKeyboardChangeNotificationType.equals("1")) ||
+		     (mKeyboardChangeNotificationType.equals("2") && (type == NextKeyboardType.AlphabetSupportsPhysical)))
+		{
+			notifyKeyboardChangeIfNeeded();
+		} 
 	}
 	
     public void swipeDown() {
@@ -1252,12 +1284,15 @@ public class AnySoftKeyboard extends InputMethodService
         if (mKeyboardChangeNotificationType.equals(""))
         {//no data, maybe old data exists.
         	mKeyboardChangeNotificationType = oldNotificationEnabled?
-        			"1" : "3";
+        			"2" : "3";
         }
         //now clearing the notification, and it will be re-shown if needed
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
-    	
+    	//should it be always on?
+		if (mKeyboardChangeNotificationType.equals("1"))
+			notifyKeyboardChangeIfNeeded();
+		
         mAutoCap = sp.getBoolean("auto_caps", true);
         mQuickFixes = true;//sp.getBoolean(PREF_QUICK_FIXES, true);
 //        // If there is no auto text data, then quickfix is forced to "on", so that the other options
