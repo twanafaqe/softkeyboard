@@ -108,7 +108,8 @@ public class AnySoftKeyboard extends InputMethodService
     private boolean mAutoSpace;
     private boolean mAutoCorrectOn;
     private boolean mCapsLock;
-    private boolean mVibrateOn;
+    //private boolean mVibrateOn;
+    private int mVibrationDuration;
     private boolean mSoundOn;
     private boolean mAutoCap;
     private boolean mQuickFixes;
@@ -1152,10 +1153,10 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     public void onPress(int primaryCode) {
-    	if(mVibrateOn)
+    	if(mVibrationDuration > 0)
     	{
     		Log.d("AnySoftKeyboard", "Vibrating on key-pressed");
-    		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(25);
+    		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(mVibrationDuration);
     	}
     	if(mSoundOn && (!mSilentMode))
     	{
@@ -1276,7 +1277,13 @@ public class AnySoftKeyboard extends InputMethodService
     private void loadSettings() {
         // Get the settings preferences
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        mVibrateOn = sp.getBoolean("vibrate_on", false);
+        boolean oldVibrateOn = sp.getBoolean("vibrate_on", false);
+        mVibrationDuration = Integer.parseInt(sp.getString("vibrate_on_key_press_duration", "-1"));
+        if (mVibrationDuration == -1)//supporting old configuration
+        {
+        	mVibrationDuration = oldVibrateOn?
+        			30 : 0;
+        }
         mSoundOn = sp.getBoolean("sound_on", false);
         //in order to support the old type of configuration
         boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
@@ -1294,10 +1301,12 @@ public class AnySoftKeyboard extends InputMethodService
 			notifyKeyboardChangeIfNeeded();
 		
         mAutoCap = sp.getBoolean("auto_caps", true);
-        mQuickFixes = true;//sp.getBoolean(PREF_QUICK_FIXES, true);
-//        // If there is no auto text data, then quickfix is forced to "on", so that the other options
-//        // will continue to work
-//        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
+        mQuickFixes = sp.getBoolean("quick_fix", true);
+/*        
+        // If there is no auto text data, then quickfix is forced to "on", so that the other options
+        // will continue to work
+        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
+*/        
         mShowSuggestions = sp.getBoolean("candidates_on", true) & mQuickFixes;
         mAutoComplete = true /*sp.getBoolean(PREF_AUTO_COMPLETE, true)*/ & mShowSuggestions;
         mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
