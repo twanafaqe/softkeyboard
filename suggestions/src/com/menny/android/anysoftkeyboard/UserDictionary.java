@@ -18,13 +18,13 @@ package com.menny.android.anysoftkeyboard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.provider.UserDictionary.Words;
+import android.util.Log;
 
 public class UserDictionary extends Dictionary {
     
@@ -85,8 +85,9 @@ public class UserDictionary extends Dictionary {
     
     private synchronized void loadDictionary() {
         Cursor cursor = mContext.getContentResolver()
-                .query(Words.CONTENT_URI, PROJECTION, "(locale IS NULL) or (locale=?)", 
-                        new String[] { Locale.getDefault().toString() }, null);
+                .query(Words.CONTENT_URI, PROJECTION, null, null, null);
+                		/*"(locale IS NULL) or (locale=?)", 
+                        new String[] { Locale.getDefault().toString() }, null);*/
         addWords(cursor);
         mRequiresReload = false;
     }
@@ -104,7 +105,15 @@ public class UserDictionary extends Dictionary {
         // Safeguard against adding long words. Can cause stack overflow.
         if (word.length() >= MAX_WORD_LENGTH) return;
         addWordRec(mRoots, word, 0, frequency);
-        Words.addWord(mContext, word, frequency, Words.LOCALE_TYPE_CURRENT);
+        try
+        {
+        	Words.addWord(mContext, word, frequency,/* Words.LOCALE_TYPE_CURRENT*/Words.LOCALE_TYPE_ALL);
+        }
+        catch(Exception ex)
+        {
+        	//Magic does not support this....
+        	Log.e("AnySoftKeyboard", "Unable to add word to user dictionary: "+ ex.getMessage());
+        }
         // In case the above does a synchronous callback of the change observer
         mRequiresReload = false;
     }
