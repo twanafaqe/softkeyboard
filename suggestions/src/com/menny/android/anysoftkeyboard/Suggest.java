@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.menny.android.anysoftkeyboard.Dictionary.Dictionary;
+import com.menny.android.anysoftkeyboard.Dictionary.UserDictionaryBase;
+
 /**
  * This class loads a dictionary and provides a list of suggestions for a given sequence of 
  * characters. This includes corrections and completions.
@@ -104,8 +107,8 @@ public class Suggest implements Dictionary.WordCallback {
         if (len <= 2) return true;
         int matching = 0;
         for (int i = 0; i < len; i++) {
-            if (UserDictionary.toLowerCase(original.charAt(i)) 
-                    == UserDictionary.toLowerCase(suggestion.charAt(i))) {
+            if (UserDictionaryBase.toLowerCase(original.charAt(i)) 
+                    == UserDictionaryBase.toLowerCase(suggestion.charAt(i))) {
                 matching++;
             }
         }

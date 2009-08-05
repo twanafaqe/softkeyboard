@@ -14,34 +14,24 @@
  * limitations under the License.
  */
 
-package com.menny.android.anysoftkeyboard;
+package com.menny.android.anysoftkeyboard.Dictionary;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.provider.UserDictionary.Words;
-import android.util.Log;
 
-public class UserDictionary extends Dictionary {
-    
-    private static final String[] PROJECTION = {
-        Words._ID,
-        Words.WORD,
-        Words.FREQUENCY
-    };
-    
-    private static final int INDEX_WORD = 1;
-    private static final int INDEX_FREQUENCY = 2;
+import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
+import com.menny.android.anysoftkeyboard.WordComposer;
+
+public abstract class UserDictionaryBase extends Dictionary {
     
     private static final char QUOTE = '\'';
     
-    private Context mContext;
+    protected final AnyKeyboardContextProvider mAnyContext;
+    protected final Context mContext;
     
-    List<Node> mRoots;
+    private final List<Node> mRoots;
     private int mMaxDepth;
     private int mInputLength;
 
@@ -49,8 +39,6 @@ public class UserDictionary extends Dictionary {
 
     private char[] mWordBuilder = new char[MAX_WORD_LENGTH];
    
-    private ContentObserver mObserver;
-    
     static class Node {
         char code;
         int frequency;
@@ -58,39 +46,28 @@ public class UserDictionary extends Dictionary {
         List<Node> children;
     }
     
-    private boolean mRequiresReload;
+    protected boolean mRequiresReload;
     
-    public UserDictionary(Context context) {
-        mContext = context;
-        // Perform a managed query. The Activity will handle closing and requerying the cursor
-        // when needed.
-        ContentResolver cres = context.getContentResolver();
-        
-        cres.registerContentObserver(Words.CONTENT_URI, true, mObserver = new ContentObserver(null) {
-            @Override
-            public void onChange(boolean self) {
-                mRequiresReload = true;
-            }
-        });
-
-        loadDictionary();
+    protected UserDictionaryBase(AnyKeyboardContextProvider anyContext) {
+    	mContext = anyContext.getApplicationContext();
+    	mAnyContext = anyContext;
+    	mRoots = new ArrayList<Node>();
+    	
+    	loadDictionary();
     }
     
     public synchronized void close() {
-        if (mObserver != null) {
-            mContext.getContentResolver().unregisterContentObserver(mObserver);
-            mObserver = null;
-        }
+        closeAllResources();
     }
+
+	protected abstract void closeAllResources();
     
     private synchronized void loadDictionary() {
-        Cursor cursor = mContext.getContentResolver()
-                .query(Words.CONTENT_URI, PROJECTION, null, null, null);
-                		/*"(locale IS NULL) or (locale=?)", 
-                        new String[] { Locale.getDefault().toString() }, null);*/
-        addWords(cursor);
+        loadAllWords();
         mRequiresReload = false;
     }
+
+	protected abstract void loadAllWords();
 
     /**
      * Adds a word to the dictionary and makes it persistent.
@@ -105,18 +82,14 @@ public class UserDictionary extends Dictionary {
         // Safeguard against adding long words. Can cause stack overflow.
         if (word.length() >= MAX_WORD_LENGTH) return;
         addWordRec(mRoots, word, 0, frequency);
-        try
-        {
-        	Words.addWord(mContext, word, frequency,/* Words.LOCALE_TYPE_CURRENT*/Words.LOCALE_TYPE_ALL);
-        }
-        catch(Exception ex)
-        {
-        	//Magic does not support this....
-        	Log.e("AnySoftKeyboard", "Unable to add word to user dictionary: "+ ex.getMessage());
-        }
+        
+        AddWordToStorage(word, frequency);
+        
         // In case the above does a synchronous callback of the change observer
         mRequiresReload = false;
     }
+
+	protected abstract void AddWordToStorage(String word, int frequency);
 
     @Override
     public synchronized void getWords(final WordComposer codes, final WordCallback callback) {
@@ -155,7 +128,7 @@ public class UserDictionary extends Dictionary {
         return false;
     }
 
-    static char toLowerCase(char c) {
+    public static char toLowerCase(char c) {
         if (c < BASE_CHARS.length) {
             c = BASE_CHARS[c];
         }
@@ -255,28 +228,11 @@ public class UserDictionary extends Dictionary {
         }
     }
 
-    private void addWords(Cursor cursor) {
-        mRoots = new ArrayList<Node>();
-        
-        if (cursor != null)
-        {
-	        if (cursor.moveToFirst()) {
-	            while (!cursor.isAfterLast()) {
-	                String word = cursor.getString(INDEX_WORD);
-	                int frequency = cursor.getInt(INDEX_FREQUENCY);
-	                // Safeguard against adding really long words. Stack may overflow due
-	                // to recursion
-	                if (word.length() < MAX_WORD_LENGTH) {
-	                    addWordRec(mRoots, word, 0, frequency);
-	                }
-	                cursor.moveToNext();
-	            }
-	        }
-	        cursor.close();
-        }
-    }
-    
-    private void addWordRec(List<Node> children, final String word, 
+    protected final void addWordFromStorage(String word, int frequency) {
+    	addWordRec(mRoots, word, 0, frequency);
+	}
+
+	private void addWordRec(List<Node> children, final String word, 
             final int depth, final int frequency) {
         
         final int wordLength = word.length();

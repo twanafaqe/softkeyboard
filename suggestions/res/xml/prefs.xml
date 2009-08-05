@@ -71,8 +71,18 @@
             android:defaultValue="true" 
             />
             <CheckBoxPreference
+            android:key="auto_complete"
+            android:title="@string/auto_complete"
+            android:summaryOn="@string/auto_complete_summary"
+            android:summaryOff=""
+            android:persistent="true"
+            android:defaultValue="true" 
+            />
+            <CheckBoxPreference
             android:key="quick_fix"
             android:title="@string/quick_fix"
+            android:summaryOn="@string/quick_fix_summary"
+            android:summaryOff=""
             android:persistent="true"
             android:defaultValue="true" 
             />

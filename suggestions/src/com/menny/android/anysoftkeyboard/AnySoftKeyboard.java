@@ -35,6 +35,7 @@ import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import com.menny.android.anysoftkeyboard.Dictionary.*;
 import com.menny.android.anysoftkeyboard.KeyboardSwitcher.NextKeyboardType;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
@@ -93,7 +94,7 @@ public class AnySoftKeyboard extends InputMethodService
     
     KeyboardSwitcher mKeyboardSwitcher;
     
-    private UserDictionary mUserDictionary;
+    private UserDictionaryBase mUserDictionary;
     
     //private String mLocale;
 
@@ -187,7 +188,15 @@ public class AnySoftKeyboard extends InputMethodService
         //mLocale = locale;
         mSuggest = new Suggest(this/*, R.raw.main*/);
         mSuggest.setCorrectionMode(mCorrectionMode);
-        mUserDictionary = new UserDictionary(this);
+        try
+        {
+        	mUserDictionary = new AndroidUserDictionary(this);
+        }
+        catch(Exception ex)
+        {
+        	Log.w("AnySoftKeyboard", "Failed to load 'AndroidUserDictionary' (could be that the platform does not support it). Will use fall-back dictionary. Error:"+ex.getMessage());
+        	mUserDictionary = new FallbackUserDictionary(this);
+        }
         mSuggest.setUserDictionary(mUserDictionary);
         //mWordSeparators = getResources().getString(R.string.word_separators);
         //mSentenceSeparators = getResources().getString(R.string.sentence_separators);
@@ -267,10 +276,6 @@ public class AnySoftKeyboard extends InputMethodService
         switch (attribute.inputType&EditorInfo.TYPE_MASK_CLASS) {
             case EditorInfo.TYPE_CLASS_NUMBER:
             case EditorInfo.TYPE_CLASS_DATETIME:
-                mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_SYMBOLS,
-                        attribute);
-                //mKeyboardSwitcher.toggleSymbols();
-                break;
             case EditorInfo.TYPE_CLASS_PHONE:
                 mKeyboardSwitcher.setKeyboardMode(KeyboardSwitcher.MODE_PHONE,
                         attribute);
@@ -709,7 +714,7 @@ public class AnySoftKeyboard extends InputMethodService
                 }
                 break;
             case AnyKeyboardView.KEYCODE_OPTIONS:
-                //showOptionsMenu();
+                showOptionsMenu();
                 break;
             case AnyKeyboardView.KEYCODE_SHIFT_LONGPRESS:
                 if (mCapsLock) {
@@ -794,6 +799,7 @@ public class AnySoftKeyboard extends InputMethodService
     }
     
     private void handleCharacter(int primaryCode, int[] keyCodes) {
+    	Log.d("AnySoftKeyboard", "handleCharacter: "+primaryCode+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting);
         if (isAlphabet(primaryCode) && isPredictionOn() && !isCursorTouchingWord()) {
             if (!mPredicting) {
                 mPredicting = true;
@@ -929,6 +935,7 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     private void updateSuggestions() {
+    	Log.d("AnySoftKeyboard", "updateSuggestions: has mSuggest:"+(mSuggest == null)+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting+", mCorrectionMode:"+mCorrectionMode);
         // Check if we have a suggestion engine attached.
         if (mSuggest == null || !isPredictionOn()) {
             return;
@@ -1274,7 +1281,8 @@ public class AnySoftKeyboard extends InputMethodService
 //        startActivity(intent);
 //    }
 
-    private void loadSettings() {
+    private boolean loadSettings() {
+    	boolean handled = false;
         // Get the settings preferences
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         boolean oldVibrateOn = sp.getBoolean("vibrate_on", false);
@@ -1284,7 +1292,9 @@ public class AnySoftKeyboard extends InputMethodService
         	mVibrationDuration = oldVibrateOn?
         			30 : 0;
         }
-        mSoundOn = sp.getBoolean("sound_on", false);
+        boolean newSoundOn = sp.getBoolean("sound_on", false);
+        handled = handled || (newSoundOn != mSoundOn);
+        mSoundOn = newSoundOn;
         //in order to support the old type of configuration
         boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
         mKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "");
@@ -1307,15 +1317,27 @@ public class AnySoftKeyboard extends InputMethodService
         // will continue to work
         if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
 */        
-        mShowSuggestions = sp.getBoolean("candidates_on", true) & mQuickFixes;
-        mAutoComplete = true /*sp.getBoolean(PREF_AUTO_COMPLETE, true)*/ & mShowSuggestions;
+        mShowSuggestions = sp.getBoolean("candidates_on", true);
+        mAutoComplete = sp.getBoolean("auto_complete", true) && mShowSuggestions;
         mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
-        mCorrectionMode = mAutoComplete ? 2 : (mQuickFixes ? 1 : 0);
+        mCorrectionMode = mAutoComplete ? 2 : (mShowSuggestions/*mQuickFixes*/ ? 1 : 0);
         
         mChangeKeysMode = sp.getString("keyboard_layout_change_method", "1");
+        
+        return handled;
+    }
+    
+    private void launchSettings() {
+        handleClose();
+        Intent intent = new Intent();
+        intent.setClass(AnySoftKeyboard.this, SoftKeyboardSettings.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
-//    private void showOptionsMenu() {
+    private void showOptionsMenu() {
+    	launchSettings();    	
+    }
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setCancelable(true);
 //        builder.setIcon(R.drawable.ic_dialog_keyboard);
@@ -1401,8 +1423,9 @@ public class AnySoftKeyboard extends InputMethodService
 			String key) {
 		Log.d("AnySoftKeyboard", "onSharedPreferenceChanged - key:"+key);
 		
-		loadSettings();
-		mKeyboardSwitcher.makeKeyboards(true);//maybe a new keyboard
+		boolean handled = loadSettings();
+		if (!handled)
+			mKeyboardSwitcher.makeKeyboards(true);//maybe a new keyboard
 	}
 
     public void appendCharactersToInput(CharSequence textToCommit) 
