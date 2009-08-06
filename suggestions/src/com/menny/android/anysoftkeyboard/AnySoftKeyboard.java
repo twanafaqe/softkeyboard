@@ -560,7 +560,7 @@ public class AnySoftKeyboard extends InputMethodService
 		if (mKeyboardSwitcher == null)//happens on first onCreate.
 			return;
 		
-		if (!mKeyboardChangeNotificationType.equals("3"))
+		if (mKeyboardSwitcher.isAlphabetMode() && (!mKeyboardChangeNotificationType.equals("3")))
 		{
 			AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
 			//notifying the user about the keyboard.
@@ -1286,42 +1286,66 @@ public class AnySoftKeyboard extends InputMethodService
         // Get the settings preferences
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         boolean oldVibrateOn = sp.getBoolean("vibrate_on", false);
-        mVibrationDuration = Integer.parseInt(sp.getString("vibrate_on_key_press_duration", "-1"));
-        if (mVibrationDuration == -1)//supporting old configuration
+        int newVibrationDuration = Integer.parseInt(sp.getString("vibrate_on_key_press_duration", "-1"));
+        if (newVibrationDuration == -1)//supporting old configuration
         {
-        	mVibrationDuration = oldVibrateOn?
+        	newVibrationDuration = oldVibrateOn?
         			30 : 0;
         }
+        handled = handled || (newVibrationDuration != mVibrationDuration);
+        mVibrationDuration = newVibrationDuration;
+        
         boolean newSoundOn = sp.getBoolean("sound_on", false);
         handled = handled || (newSoundOn != mSoundOn);
         mSoundOn = newSoundOn;
+        
         //in order to support the old type of configuration
         boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
-        mKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "");
-        if (mKeyboardChangeNotificationType.equals(""))
+        String newKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "");
+        if (newKeyboardChangeNotificationType.equals(""))
         {//no data, maybe old data exists.
-        	mKeyboardChangeNotificationType = oldNotificationEnabled?
+        	newKeyboardChangeNotificationType = oldNotificationEnabled?
         			"2" : "3";
         }
-        //now clearing the notification, and it will be re-shown if needed
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
-    	//should it be always on?
-		if (mKeyboardChangeNotificationType.equals("1"))
-			notifyKeyboardChangeIfNeeded();
-		
-        mAutoCap = sp.getBoolean("auto_caps", true);
-        mQuickFixes = sp.getBoolean("quick_fix", true);
+        boolean notificationChanged = (!newKeyboardChangeNotificationType.equalsIgnoreCase(mKeyboardChangeNotificationType)); 
+        handled = handled || notificationChanged;
+        mKeyboardChangeNotificationType = newKeyboardChangeNotificationType;
+        
+        if (notificationChanged)
+        {
+	        //now clearing the notification, and it will be re-shown if needed
+	        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	    	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+	    	//should it be always on?
+			if (mKeyboardChangeNotificationType.equals("1"))
+				notifyKeyboardChangeIfNeeded();
+        }
+        
+        boolean newAutoCap = sp.getBoolean("auto_caps", true);
+        handled = handled || (newAutoCap != mAutoCap);
+        mAutoCap = newAutoCap;
+        
+        boolean newQuickFixes = sp.getBoolean("quick_fix", true);
+        handled = handled || (newQuickFixes != mQuickFixes);
+        mQuickFixes = newQuickFixes;
 /*        
         // If there is no auto text data, then quickfix is forced to "on", so that the other options
         // will continue to work
         if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
 */        
-        mShowSuggestions = sp.getBoolean("candidates_on", true);
-        mAutoComplete = sp.getBoolean("auto_complete", true) && mShowSuggestions;
+        boolean newShowSuggestions = sp.getBoolean("candidates_on", true);
+        handled = handled || (newShowSuggestions != mShowSuggestions);
+        mShowSuggestions = newShowSuggestions;
+        
+        boolean newAutoComplete = sp.getBoolean("auto_complete", true) && mShowSuggestions;
+        handled = handled || (newAutoComplete != mAutoComplete);
+        mAutoComplete = newAutoComplete;
+        
         mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
         mCorrectionMode = mAutoComplete ? 2 : (mShowSuggestions/*mQuickFixes*/ ? 1 : 0);
         
+        //this change requires the recreation of the keyboards.
+        //so we wont mark the 'handled' result.
         mChangeKeysMode = sp.getString("keyboard_layout_change_method", "1");
         
         return handled;
