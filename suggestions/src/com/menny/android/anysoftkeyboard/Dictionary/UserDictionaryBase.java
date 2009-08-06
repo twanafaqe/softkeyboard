@@ -52,11 +52,11 @@ public abstract class UserDictionaryBase extends Dictionary {
     	mContext = anyContext.getApplicationContext();
     	mAnyContext = anyContext;
     	mRoots = new ArrayList<Node>();
-    	
+
     	loadDictionary();
     }
     
-    public synchronized void close() {
+	public synchronized void close() {
         closeAllResources();
     }
 
