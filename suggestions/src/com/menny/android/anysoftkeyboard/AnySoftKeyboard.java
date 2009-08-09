@@ -78,7 +78,7 @@ public class AnySoftKeyboard extends InputMethodService
     private static final int KEYCODE_ENTER = 10;
     private static final int KEYCODE_SPACE = ' ';
 	private static final int KEYBOARD_NOTIFICATION_ID = 1;
-	private final String SENTENCE_SEPERATORS = ".\n!?";
+	private static final String SENTENCE_SEPERATORS = ".\n!?";
 
     // Contextual menu positions
     //private static final int POS_SETTINGS = 0;
@@ -118,6 +118,9 @@ public class AnySoftKeyboard extends InputMethodService
     private boolean mAutoComplete;
     private int     mCorrectionMode;
 	private String mKeyboardChangeNotificationType;
+	private static final String KEYBOARD_NOTIFICATION_ALWAYS = "1";
+	private static final String KEYBOARD_NOTIFICATION_ON_PHYSICAL = "2";
+	private static final String KEYBOARD_NOTIFICATION_NEVER = "3";
     
     public static String mChangeKeysMode;
     
@@ -134,7 +137,7 @@ public class AnySoftKeyboard extends InputMethodService
 
     private AudioManager mAudioManager;
     //private final float FX_VOLUME = 1.0f;
-    private boolean mSilentMode;
+    //private boolean mSilentMode;
     private NotificationManager mNotificationManager;
 
     //private String mWordSeparators;
@@ -166,19 +169,20 @@ public class AnySoftKeyboard extends InputMethodService
     @Override public void onCreate() {
         super.onCreate();
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         //setStatusIcon(R.drawable.ime_qwerty);
         loadSettings();
         mKeyboardSwitcher = new KeyboardSwitcher(this);
         //should it be always on?
-		if (mKeyboardChangeNotificationType.equals("1"))
+		if (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS))
 			notifyKeyboardChangeIfNeeded();
         initSuggest(/*getResources().getConfiguration().locale.toString()*/);
         
         //mVibrateDuration = getResources().getInteger(R.integer.vibrate_duration_ms);
         
         // register to receive ringer mode changes for silent mode
-        IntentFilter filter = new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION);
-        registerReceiver(mReceiver, filter);
+//        IntentFilter filter = new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION);
+//        registerReceiver(mReceiver, filter);
         
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		sp.registerOnSharedPreferenceChangeListener(this);
@@ -188,23 +192,18 @@ public class AnySoftKeyboard extends InputMethodService
         //mLocale = locale;
         mSuggest = new Suggest(this/*, R.raw.main*/);
         mSuggest.setCorrectionMode(mCorrectionMode);
-        try
-        {
-        	mUserDictionary = new AndroidUserDictionary(this);
-        }
-        catch(Exception ex)
-        {
-        	Log.w("AnySoftKeyboard", "Failed to load 'AndroidUserDictionary' (could be that the platform does not support it). Will use fall-back dictionary. Error:"+ex.getMessage());
-        	mUserDictionary = new FallbackUserDictionary(this);
-        }
+        mUserDictionary = DictionaryFactory.createUserDictionary(this); 
         mSuggest.setUserDictionary(mUserDictionary);
+        
+        //DictionaryFactory.getDictionary(Language.English, this);
+        
         //mWordSeparators = getResources().getString(R.string.word_separators);
         //mSentenceSeparators = getResources().getString(R.string.sentence_separators);
     }
     
     @Override public void onDestroy() {
         mUserDictionary.close();
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
         
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		sp.unregisterOnSharedPreferenceChangeListener(this);
@@ -222,7 +221,7 @@ public class AnySoftKeyboard extends InputMethodService
     @Override
     public void onFinishInputView(boolean finishingInput) 
     {
-    	if (!mKeyboardChangeNotificationType.equals("1"))
+    	if (!mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS))
     	{
     		mNotificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
     	}
@@ -347,7 +346,7 @@ public class AnySoftKeyboard extends InputMethodService
             mInputView.closing();
         }
         
-        if (!mKeyboardChangeNotificationType.equals("1"))
+        if (!mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS))
         {
         	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
@@ -555,12 +554,11 @@ public class AnySoftKeyboard extends InputMethodService
 	{
 //		Log.d("anySoftKeyboard","notifyKeyboardChangeIfNeeded"); 
 //		Thread.dumpStack();
-		//removing last notification
-		mNotificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
 		if (mKeyboardSwitcher == null)//happens on first onCreate.
 			return;
 		
-		if (mKeyboardSwitcher.isAlphabetMode() && (!mKeyboardChangeNotificationType.equals("3")))
+		if ((mKeyboardSwitcher.isAlphabetMode()) && 
+				!mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_NEVER))
 		{
 			AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
 			//notifying the user about the keyboard.
@@ -688,7 +686,8 @@ public class AnySoftKeyboard extends InputMethodService
      */
     private boolean isAlphabet(int code) 
     {
-        return mKeyboardSwitcher.getCurrentKeyboard().isLetter((char)code);
+        //return mKeyboardSwitcher.getCurrentKeyboard().isLetter((char)code);
+    	return Character.isLetter((char)code);
     }
     
     // Implementation of KeyboardViewListener
@@ -799,7 +798,7 @@ public class AnySoftKeyboard extends InputMethodService
     }
     
     private void handleCharacter(int primaryCode, int[] keyCodes) {
-    	Log.d("AnySoftKeyboard", "handleCharacter: "+primaryCode+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting);
+    	//Log.d("AnySoftKeyboard", "handleCharacter: "+primaryCode+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting);
         if (isAlphabet(primaryCode) && isPredictionOn() && !isCursorTouchingWord()) {
             if (!mPredicting) {
                 mPredicting = true;
@@ -1144,8 +1143,8 @@ public class AnySoftKeyboard extends InputMethodService
 		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "+currentKeyboard.getKeyboardName());
 		updateShiftKeyState(currentEditorInfo);
 		//Notifying if needed
-		if ( (mKeyboardChangeNotificationType.equals("1")) ||
-		     (mKeyboardChangeNotificationType.equals("2") && (type == NextKeyboardType.AlphabetSupportsPhysical)))
+		if ( (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS)) ||
+		     (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ON_PHYSICAL) && (type == NextKeyboardType.AlphabetSupportsPhysical)))
 		{
 			notifyKeyboardChangeIfNeeded();
 		} 
@@ -1165,7 +1164,7 @@ public class AnySoftKeyboard extends InputMethodService
     		Log.d("AnySoftKeyboard", "Vibrating on key-pressed");
     		((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(mVibrationDuration);
     	}
-    	if(mSoundOn && (!mSilentMode))
+    	if(mSoundOn/* && (!mSilentMode)*/)
     	{
     		AudioManager manager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
     		//Will use sound effects ONLY if the device is not muted.
@@ -1198,22 +1197,17 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     // receive ringer mode changes to detect silent mode
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateRingerMode();
-        }
-    };
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            updateRingerMode();
+//        }
+//    };
 
     // update flags for silent mode
-    private void updateRingerMode() {
-        if (mAudioManager == null) {
-            mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        }
-        if (mAudioManager != null) {
-            mSilentMode = (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL);
-        }
-    }
+//    private void updateRingerMode() {
+//    	mSilentMode = (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL);
+//    }
 
 //    private void playKeyClick(int primaryCode) {
 //        // if mAudioManager is null, we don't have the ringer state yet
@@ -1285,27 +1279,48 @@ public class AnySoftKeyboard extends InputMethodService
     	boolean handled = false;
         // Get the settings preferences
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean oldVibrateOn = sp.getBoolean("vibrate_on", false);
-        int newVibrationDuration = Integer.parseInt(sp.getString("vibrate_on_key_press_duration", "-1"));
-        if (newVibrationDuration == -1)//supporting old configuration
+        int newVibrationDuration;
+        if (sp.contains("vibrate_on") && !sp.contains("vibrate_on_key_press_duration"))
         {
-        	newVibrationDuration = oldVibrateOn?
-        			30 : 0;
+	        boolean oldVibrateOn = sp.getBoolean("vibrate_on", false);        
+	        newVibrationDuration = oldVibrateOn? 30 : 0;
+        }
+        else
+        {
+        	newVibrationDuration = Integer.parseInt(sp.getString("vibrate_on_key_press_duration", "0"));
         }
         handled = handled || (newVibrationDuration != mVibrationDuration);
         mVibrationDuration = newVibrationDuration;
         
-        boolean newSoundOn = sp.getBoolean("sound_on", false);
-        handled = handled || (newSoundOn != mSoundOn);
-        mSoundOn = newSoundOn;
         
+        boolean newSoundOn = sp.getBoolean("sound_on", false);
+        boolean soundChanged = (newSoundOn != mSoundOn);
+        if (soundChanged)
+        {
+	        if (newSoundOn)
+			{
+				Log.i("AnySoftKeyboard", "Loading sounds effects from AUDIO_SERVICE due to configuration change.");
+	        	mAudioManager.loadSoundEffects();
+			}
+	        else
+	        {
+	        	Log.i("AnySoftKeyboard", "Releasing sounds effects from AUDIO_SERVICE due to configuration change.");
+	        	mAudioManager.unloadSoundEffects();
+	        }
+        }
+        handled = handled || soundChanged;
+        mSoundOn = newSoundOn;
         //in order to support the old type of configuration
-        boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
-        String newKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "");
-        if (newKeyboardChangeNotificationType.equals(""))
-        {//no data, maybe old data exists.
+        String newKeyboardChangeNotificationType;
+        if (sp.contains("physical_keyboard_change_notification") && !sp.contains("physical_keyboard_change_notification_type"))
+        {
+        	boolean oldNotificationEnabled  = sp.getBoolean("physical_keyboard_change_notification", true);
         	newKeyboardChangeNotificationType = oldNotificationEnabled?
         			"2" : "3";
+        }
+        else
+        {
+        	newKeyboardChangeNotificationType = sp.getString("physical_keyboard_change_notification_type", "2");
         }
         boolean notificationChanged = (!newKeyboardChangeNotificationType.equalsIgnoreCase(mKeyboardChangeNotificationType)); 
         handled = handled || notificationChanged;
@@ -1313,11 +1328,12 @@ public class AnySoftKeyboard extends InputMethodService
         
         if (notificationChanged)
         {
-	        //now clearing the notification, and it will be re-shown if needed
-	        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-	    	notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
+        	//now clearing the notification, and it will be re-shown if needed
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        	//now clearing the notification, and it will be re-shown if needed
+	        notificationManager.cancel(KEYBOARD_NOTIFICATION_ID);
 	    	//should it be always on?
-			if (mKeyboardChangeNotificationType.equals("1"))
+			if (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS))
 				notifyKeyboardChangeIfNeeded();
         }
         
@@ -1325,14 +1341,6 @@ public class AnySoftKeyboard extends InputMethodService
         handled = handled || (newAutoCap != mAutoCap);
         mAutoCap = newAutoCap;
         
-        boolean newQuickFixes = sp.getBoolean("quick_fix", true);
-        handled = handled || (newQuickFixes != mQuickFixes);
-        mQuickFixes = newQuickFixes;
-/*        
-        // If there is no auto text data, then quickfix is forced to "on", so that the other options
-        // will continue to work
-        if (AutoText.getSize(mInputView) < 1) mQuickFixes = true;
-*/        
         boolean newShowSuggestions = sp.getBoolean("candidates_on", true);
         handled = handled || (newShowSuggestions != mShowSuggestions);
         mShowSuggestions = newShowSuggestions;
@@ -1341,7 +1349,11 @@ public class AnySoftKeyboard extends InputMethodService
         handled = handled || (newAutoComplete != mAutoComplete);
         mAutoComplete = newAutoComplete;
         
-        mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
+        boolean newQuickFixes= sp.getBoolean("quick_fix", true);
+		handled = handled || (newQuickFixes != mQuickFixes); 
+		mQuickFixes = newQuickFixes;
+        
+		mAutoCorrectOn = mSuggest != null && (mAutoComplete || mQuickFixes);
         mCorrectionMode = mAutoComplete ? 2 : (mShowSuggestions/*mQuickFixes*/ ? 1 : 0);
         
         //this change requires the recreation of the keyboards.

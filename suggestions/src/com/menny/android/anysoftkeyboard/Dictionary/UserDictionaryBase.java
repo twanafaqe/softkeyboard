@@ -23,6 +23,7 @@ import android.content.Context;
 
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 import com.menny.android.anysoftkeyboard.WordComposer;
+import com.menny.android.anysoftkeyboard.Dictionary.Dictionary;
 
 public abstract class UserDictionaryBase extends Dictionary {
     

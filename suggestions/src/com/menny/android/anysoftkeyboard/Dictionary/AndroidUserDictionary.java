@@ -7,7 +7,7 @@ import android.provider.UserDictionary.Words;
 
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 
-public class AndroidUserDictionary extends UserDictionaryBase {
+class AndroidUserDictionary extends UserDictionaryBase {
 
 	private static final String[] PROJECTION = {
         Words._ID,

@@ -12,9 +12,21 @@ import android.view.inputmethod.EditorInfo;
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 import com.menny.android.anysoftkeyboard.AnySoftKeyboard;
 import com.menny.android.anysoftkeyboard.R;
+import com.menny.android.anysoftkeyboard.Dictionary.Dictionary;
 
 public abstract class AnyKeyboard extends Keyboard 
 {
+	protected class ShiftedKeyData
+	{
+		public final char ShiftCharacter;
+		public final AnyKey KeyboardKey;
+		
+		public ShiftedKeyData(AnyKey key)
+		{
+			KeyboardKey = key;
+			ShiftCharacter = (char) key.codes[1]; 
+		}
+	}
 	public final static int KEYCODE_LANG_CHANGE = -99;
 	public final static int KEYCODE_SMILEY = -10;
 	//public final static int KEYCODE_DOT_COM = -80;
@@ -36,8 +48,9 @@ public abstract class AnyKeyboard extends Keyboard
     
 	private final String mKeyboardName;
     private final boolean mLeftToRightLanguageDirection;
+    private final Dictionary.Language mDefaultDictionaryLanguage;
 	//private final String mKeyboardPrefId;
-    private HashMap<Character, Character> mSpecialShiftKeys;
+    private HashMap<Character, ShiftedKeyData> mSpecialShiftKeys;
     
 //    private Drawable mShiftLockIcon;
 //    private Drawable mShiftLockPreviewIcon;
@@ -55,7 +68,8 @@ public abstract class AnyKeyboard extends Keyboard
     		/*mapping XML id will be added here,*/
     		int keyboardNameId,
     		/*String keyboardEnabledPref,*/
-    		boolean leftToRightLanguageDirection) 
+    		boolean leftToRightLanguageDirection,
+    		Dictionary.Language defaultDictionaryLanguage) 
     {
         super(context.getApplicationContext(), xmlLayoutResId);
         mKeyboardContext = context;
@@ -65,6 +79,7 @@ public abstract class AnyKeyboard extends Keyboard
         else
         	mKeyboardName = "";
         mLeftToRightLanguageDirection = leftToRightLanguageDirection;
+        mDefaultDictionaryLanguage = defaultDictionaryLanguage;
         //mKeyboardPrefId = keyboardEnabledPref;
         Log.i("AnySoftKeyboard", "Done creating keyboard: "+mKeyboardName);
     	
@@ -83,13 +98,18 @@ public abstract class AnyKeyboard extends Keyboard
     	return mKeyboardContext;
     }
     
+    public Dictionary.Language getDefaultDictionaryLanguage()
+    {
+    	return mDefaultDictionaryLanguage;
+    }
+    
     //this function is called from within the super constructor.
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, 
             XmlResourceParser parser) {
-    	if (mSpecialShiftKeys == null) mSpecialShiftKeys = new HashMap<Character, Character>();
+    	if (mSpecialShiftKeys == null) mSpecialShiftKeys = new HashMap<Character, ShiftedKeyData>();
     	
-        Key key = new AnyKey(res, parent, x, y, parser);
+    	AnyKey key = new AnyKey(res, parent, x, y, parser);
         
         if ((key.codes != null) && (key.codes.length > 0))
         {
@@ -159,10 +179,10 @@ public abstract class AnyKeyboard extends Keyboard
         	if ((primaryCode>0) && (primaryCode<Character.MAX_VALUE))
         	{
         		Character primary = new Character((char)primaryCode);
-	        	char shifted = (char)key.codes[1];
+        		ShiftedKeyData keyData = new ShiftedKeyData(key);
 	        	if (!mSpecialShiftKeys.containsKey(primary))
-	        		mSpecialShiftKeys.put(primary, new Character(shifted));
-	        	Log.v("AnySoftKeyboard", "Adding mapping ("+primary+"->"+shifted+") to mSpecialShiftKeys.");
+	        		mSpecialShiftKeys.put(primary, keyData);
+	        	Log.v("AnySoftKeyboard", "Adding mapping ("+primary+"->"+keyData.ShiftCharacter+") to mSpecialShiftKeys.");
 	        }
         }
         return key;
@@ -257,13 +277,14 @@ public abstract class AnyKeyboard extends Keyboard
 //    	return mKeyboardPrefId;
 //    }
     
-    public boolean isLetter(char letterCode)
-    {
-    	if (Character.isLetter(letterCode)) 
-    		return true;
-        else
-        	return false;
-    }
+//    public boolean isLetter(char letterCode)
+//    {
+//    	if (Character.isLetter(letterCode)) 
+//    		return true;
+//        else
+//        	return false;
+//    }
+    
 //	public void addSuggestions(String currentWord, ArrayList<String> list) 
 //	{
 //	}
@@ -321,10 +342,15 @@ public abstract class AnyKeyboard extends Keyboard
 		mShiftState = shiftState? SHIFT_ON : SHIFT_OFF;
 		if (result)
 		{//layout changed. Need to change labels.
-			for(Key aKey : getKeys())
+			//going over the special keys only.
+			for(ShiftedKeyData data : mSpecialShiftKeys.values())
 			{
-				onKeyShifted(aKey, shiftState);
+				onKeyShifted(data, shiftState);
 			}
+//			for(Key aKey : getKeys())
+//			{
+//				onKeyShifted(aKey, shiftState);
+//			}
 		}
 		
 		return result;
@@ -334,17 +360,19 @@ public abstract class AnyKeyboard extends Keyboard
 		return mShiftState == SHIFT_LOCKED;
 	}
 
-	protected void onKeyShifted(Key aKey, boolean shiftState) 
+	protected void onKeyShifted(ShiftedKeyData data, boolean shiftState) 
 	{
-		if (aKey.codes.length > 1)
-		{
-			aKey.label = shiftState? ""+((char)aKey.codes[1]) : ""+((char)aKey.codes[0]);
-			Log.v("AnySoftKeyboard", "setShifted: changed key:"+aKey.label);
-		}
-		else
-		{
-			Log.v("AnySoftKeyboard", "setShifted: not changed key:"+aKey.label);
-		}
+		AnyKey aKey = data.KeyboardKey;
+		aKey.label = shiftState? ""+data.ShiftCharacter : ""+((char)aKey.codes[0]);
+//		if (aKey.codes.length > 1)
+//		{
+//			aKey.label = shiftState? ""+((char)aKey.codes[1]) : ""+((char)aKey.codes[0]);
+//			Log.v("AnySoftKeyboard", "setShifted: changed key:"+aKey.label);
+//		}
+//		else
+//		{
+//			Log.v("AnySoftKeyboard", "setShifted: not changed key:"+aKey.label);
+//		}
 	}
 	
 	protected void setPopupKeyChars(Key aKey) 
@@ -432,7 +460,23 @@ public abstract class AnyKeyboard extends Keyboard
         }
 	}
 	
-	class AnyKey extends Keyboard.Key {
+	public int getShiftedKeyValue(int primaryCode) 
+	{
+		if ((primaryCode>0) && (primaryCode<Character.MAX_VALUE))
+		{
+			Character c = new Character((char)primaryCode);
+			if (mSpecialShiftKeys.containsKey(c))
+			{
+				char shifted = mSpecialShiftKeys.get(c).ShiftCharacter;
+				Log.v("AnySoftKeyboard", "Returned the shifted mapping ("+c+"->"+shifted+") from mSpecialShiftKeys.");
+				return shifted;
+			}
+		}
+		//else...best try.
+		return Character.toUpperCase(primaryCode);
+	}
+	
+class AnyKey extends Keyboard.Key {
         
         //private boolean mShiftLockEnabled;
         
@@ -461,10 +505,39 @@ public abstract class AnyKeyboard extends Keyboard
 	
 	class LessSensitiveAnyKey extends AnyKey {
         
+		private int mStartX;
+		private int mStartY;
+		private int mEndX;
+		private int mEndY;
+		
         public LessSensitiveAnyKey(Resources res, Keyboard.Row parent, int x, int y, 
                 XmlResourceParser parser) {
             super(res, parent, x, y, parser);
+            mStartX = this.x;
+            mStartY = this.y;
+            mEndX = this.width + this.x;
+            mEndY = this.height + this.y;
+        	
+        	switch(codes[0])
+        	{
+        	case 10://the enter key!
+        		//we want to "click" it only if it in the lower 80%
+        		mStartY += (this.height * 0.2);
+        		break;
+        	case KEYCODE_DELETE:
+        		//we want to "click" it only if it in the middle 80%
+        		//and in the right 80%
+        		mStartY += (this.height * 0.1);
+        		mEndY -= (this.height * 0.2);
+        		mStartX += (this.width * 0.1);
+        		break;
+        	case KEYCODE_SHIFT:
+        		//we want to "click" it only if it in the left 80%
+        		mEndX -= (this.width * 0.15);
+        		break;
+        	}
         }
+        
         
          /**
          * Overriding this method so that we can reduce the target area for certain keys.
@@ -472,66 +545,54 @@ public abstract class AnyKeyboard extends Keyboard
         @Override
         public boolean isInside(int clickedX, int clickedY) 
         {
-        	int startX = this.x;
-        	int startY = this.y;
-        	int endX = this.width + this.x;
-        	int endY = this.height + this.y;
-        	
-        	boolean isInside = false;
-        	switch(codes[0])
-        	{
-        	case 10://the enter key!
-        		//we want to "click" it only if it in the lower 80%
-        		startY += (this.height * 0.2);
-        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
-        		break;
-        	case KEYCODE_DELETE:
-        		//we want to "click" it only if it in the middle 80%
-        		//and in the right 80%
-        		startY += (this.height * 0.1);
-        		endY -= (this.height * 0.2);
-        		startX += (this.width * 0.15);
-        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
-        		break;
-        	case KEYCODE_SHIFT:
-        		//we want to "click" it only if it in the left 80%
-        		endX -= (this.width * 0.2);
-        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
-        		break;
-    		default:
-    			isInside = super.isInside(clickedX, clickedY);
-        		break;
-        	}
-            
-        	Log.d("AnySoftKeyboard", "Key "+codes[0]+" x:"+this.x+", y:"+this.y+", height:"+this.height+", width:"+this.width+", clickedX:"+clickedX+", clickedY:"+clickedY+" result:"+isInside);
-        	
-            return isInside;
+        	return 	clickedX >= mStartX &&
+				clickedX <= mEndX &&
+				clickedY >= mStartY &&
+				clickedY <= mEndY;
+//        	int startX = this.x;
+//        	int startY = this.y;
+//        	int endX = this.width + this.x;
+//        	int endY = this.height + this.y;
+//        	
+//        	boolean isInside = false;
+//        	switch(codes[0])
+//        	{
+//        	case 10://the enter key!
+//        		//we want to "click" it only if it in the lower 80%
+//        		startY += (this.height * 0.2);
+//        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
+//        		break;
+//        	case KEYCODE_DELETE:
+//        		//we want to "click" it only if it in the middle 80%
+//        		//and in the right 80%
+//        		startY += (this.height * 0.1);
+//        		endY -= (this.height * 0.2);
+//        		startX += (this.width * 0.15);
+//        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
+//        		break;
+//        	case KEYCODE_SHIFT:
+//        		//we want to "click" it only if it in the left 80%
+//        		endX -= (this.width * 0.2);
+//        		isInside = checkIfInside(startX, startY, endX, endY, clickedX, clickedY);
+//        		break;
+//    		default:
+//    			isInside = super.isInside(clickedX, clickedY);
+//        		break;
+//        	}
+//            
+//        	//Log.d("AnySoftKeyboard", "Key "+codes[0]+" x:"+this.x+", y:"+this.y+", height:"+this.height+", width:"+this.width+", clickedX:"+clickedX+", clickedY:"+clickedY+" result:"+isInside);
+//        	
+//            return isInside;
         }
 
-		private boolean checkIfInside(int startX, int startY, 
-				int endX, int endY, 
-				int clickedX, int clickedY) 
-		{
-			return 	clickedX >= startX &&
-					clickedX <= endX &&
-					clickedY >= startY &&
-					clickedY <= endY;
-		}
+//		private boolean checkIfInside(int startX, int startY, 
+//				int endX, int endY, 
+//				int clickedX, int clickedY) 
+//		{
+//			return 	clickedX >= startX &&
+//					clickedX <= endX &&
+//					clickedY >= startY &&
+//					clickedY <= endY;
+//		}
     }
-
-	public int getShiftedKeyValue(int primaryCode) 
-	{
-		if ((primaryCode>0) && (primaryCode<Character.MAX_VALUE))
-		{
-			Character c = new Character((char)primaryCode);
-			if (mSpecialShiftKeys.containsKey(c))
-			{
-				char shifted = mSpecialShiftKeys.get(c).charValue();
-				Log.v("AnySoftKeyboard", "Returned the shifted mapping ("+c+"->"+shifted+") from mSpecialShiftKeys.");
-				return shifted;
-			}
-		}
-		//else...best try.
-		return Character.toUpperCase(primaryCode);
-	}
 }

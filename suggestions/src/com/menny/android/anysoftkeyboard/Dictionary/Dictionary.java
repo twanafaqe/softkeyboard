@@ -24,6 +24,13 @@ import com.menny.android.anysoftkeyboard.WordComposer;
  */
 abstract public class Dictionary {
     
+	public enum Language
+	{
+		None,
+		English,
+		Hebrew,
+	}
+	
     /**
      * Whether or not to replicate the typed word in the suggested list, even if it's valid.
      */

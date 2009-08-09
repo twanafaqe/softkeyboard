@@ -21,6 +21,7 @@ import java.io.FileDescriptor;
 import java.util.Arrays;
 
 import com.menny.android.anysoftkeyboard.WordComposer;
+import com.menny.android.anysoftkeyboard.Dictionary.Dictionary;
 
 import android.content.res.AssetFileDescriptor;
 import android.util.Log;
@@ -28,7 +29,7 @@ import android.util.Log;
 /**
  * Implements a static, compacted, binary dictionary of standard words.
  */
-public class BinaryDictionary extends Dictionary {
+class BinaryDictionary extends Dictionary {
     private static final String TAG = "BinaryDictionary";
     
     public static final int MAX_WORD_LENGTH = 48;

@@ -21,7 +21,7 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-public class EnglishBinaryDictionary extends BinaryDictionary {
+class EnglishBinaryDictionary extends BinaryDictionary {
     public EnglishBinaryDictionary (Context context) throws NameNotFoundException, IOException {
         super(context.getPackageManager().getResourcesForApplication("com.android.inputmethod.latin").getAssets().openNonAssetFd("res/raw-en/main.dict"));
     }
