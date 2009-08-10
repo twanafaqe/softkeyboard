@@ -36,6 +36,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
 import com.menny.android.anysoftkeyboard.Dictionary.*;
+import com.menny.android.anysoftkeyboard.Dictionary.Dictionary.Language;
 import com.menny.android.anysoftkeyboard.KeyboardSwitcher.NextKeyboardType;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
@@ -195,8 +196,12 @@ public class AnySoftKeyboard extends InputMethodService
         mUserDictionary = DictionaryFactory.createUserDictionary(this); 
         mSuggest.setUserDictionary(mUserDictionary);
         
-        //DictionaryFactory.getDictionary(Language.English, this);
-        
+        if (mKeyboardSwitcher.isAlphabetMode())
+        {
+        	AnyKeyboard currentKeyobard = mKeyboardSwitcher.getCurrentKeyboard();
+        	Dictionary mainDictionary = DictionaryFactory.getDictionary(currentKeyobard.getDefaultDictionaryLanguage(), this);
+        	mSuggest.setMainDictionary(mainDictionary);
+        }
         //mWordSeparators = getResources().getString(R.string.word_separators);
         //mSentenceSeparators = getResources().getString(R.string.sentence_separators);
     }
@@ -934,7 +939,7 @@ public class AnySoftKeyboard extends InputMethodService
     }
 
     private void updateSuggestions() {
-    	Log.d("AnySoftKeyboard", "updateSuggestions: has mSuggest:"+(mSuggest == null)+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting+", mCorrectionMode:"+mCorrectionMode);
+    	Log.d("AnySoftKeyboard", "updateSuggestions: has mSuggest:"+(mSuggest != null)+", isPredictionOn:"+isPredictionOn()+", mPredicting:"+mPredicting+", mCorrectionMode:"+mCorrectionMode);
         // Check if we have a suggestion engine attached.
         if (mSuggest == null || !isPredictionOn()) {
             return;
@@ -1142,6 +1147,14 @@ public class AnySoftKeyboard extends InputMethodService
 		
 		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "+currentKeyboard.getKeyboardName());
 		updateShiftKeyState(currentEditorInfo);
+		//changing dictionary
+		if (mSuggest != null)
+		{
+			if (mKeyboardSwitcher.isAlphabetMode())
+				mSuggest.setMainDictionary(DictionaryFactory.getDictionary(Language.English, this));
+			else
+				mSuggest.setMainDictionary(null);
+		}
 		//Notifying if needed
 		if ( (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ALWAYS)) ||
 		     (mKeyboardChangeNotificationType.equals(KEYBOARD_NOTIFICATION_ON_PHYSICAL) && (type == NextKeyboardType.AlphabetSupportsPhysical)))

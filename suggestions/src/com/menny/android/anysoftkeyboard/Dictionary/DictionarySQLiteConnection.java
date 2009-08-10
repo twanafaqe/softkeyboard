@@ -15,10 +15,12 @@ public class DictionarySQLiteConnection extends SQLiteOpenHelper
 	private final String mTableName;
 	private final String mWordsColumnName;
 	private final String mFrequencyColumnName;
+	protected final Context mContext;
 	
 	public DictionarySQLiteConnection(Context context, String dbName, String tableName, String wordsColumnName, String frequencyColumnName) {
 		super(context, dbName, null, 2);
 		
+		mContext = context;
 		mTableName = tableName;
 		mWordsColumnName = wordsColumnName;
 		mFrequencyColumnName =frequencyColumnName;			

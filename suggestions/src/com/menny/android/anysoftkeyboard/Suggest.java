@@ -40,7 +40,7 @@ public class Suggest implements Dictionary.WordCallback {
     public static final int CORRECTION_BASIC = 1;
     public static final int CORRECTION_FULL = 2;
     
-    //private Dictionary mMainDict;
+    private Dictionary mMainDict;
     
     private Dictionary mUserDictionary;
     
@@ -146,12 +146,18 @@ public class Suggest implements Dictionary.WordCallback {
         // Search the dictionary only if there are at least 2 characters
         if (wordComposer.size() > 1) {
             if (mUserDictionary != null) {
+            	Log.v("AnySoftKeyboard", "getSuggestions from user-dictionary");
                 mUserDictionary.getWords(wordComposer, this);
                 if (mSuggestions.size() > 0 && isValidWord(mOriginalWord)) {
                     mHaveCorrection = true;
                 }
             }
-            //mMainDict.getWords(wordComposer, this);
+            if (mMainDict != null)
+            {
+            	Log.v("AnySoftKeyboard", "getSuggestions from main-dictionary");
+            	mMainDict.getWords(wordComposer, this);
+            }
+            
             if (mCorrectionMode == CORRECTION_FULL && mSuggestions.size() > 0) {
                 mHaveCorrection = true;
             }
@@ -213,6 +219,7 @@ public class Suggest implements Dictionary.WordCallback {
     }
 
     public boolean addWord(final char[] word, final int offset, final int length, final int freq) {
+    	Log.v("AnySoftKeyboard", "Suggest::addWord");
         int pos = 0;
         final int[] priorities = mPriorities;
         final int prefMaxSuggestions = mPrefMaxSuggestions;
@@ -257,8 +264,8 @@ public class Suggest implements Dictionary.WordCallback {
         if (word == null || word.length() == 0) {
             return false;
         }
-        return /*(mCorrectionMode == CORRECTION_FULL && mMainDict.isValidWord(word)) 
-                ||*/ (mCorrectionMode > CORRECTION_NONE && 
+        return (mCorrectionMode == CORRECTION_FULL && (mMainDict!=null) && mMainDict.isValidWord(word)) 
+                || (mCorrectionMode > CORRECTION_NONE && 
                     (mUserDictionary != null && mUserDictionary.isValidWord(word)));
     }
     
@@ -278,4 +285,10 @@ public class Suggest implements Dictionary.WordCallback {
         }
         mSuggestions.clear();
     }
+
+	public void setMainDictionary(Dictionary dictionary) {
+		Log.d("AnySoftKeyboard", "Suggest: Got main dictionary! Type: " +
+				((dictionary == null)? "NULL" : dictionary.getClass().getName()));
+		mMainDict = dictionary;		
+	}
 }
