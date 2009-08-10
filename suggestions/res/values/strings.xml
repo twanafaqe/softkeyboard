@@ -2,7 +2,13 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="ime_name">Any Soft Keyboard</string>
-
+	<string name="how_to_pointer_title">Welcome to AnySoftKeyboard</string>
+	<string name="how_to_pointer_not_app">AnySoftKeyboard is not a regular application - it is a on-screen keyboard replacement.</string>
+	<string name="how_to_pointer_how_to_url">Go to 'http://code.google.com/p/softkeyboard/wiki/HowTo' for details about how to use this keyboard.</string>
+	<string name="how_to_pointer_changelog">For details about the latest version, go to: 'http://code.google.com/p/softkeyboard/wiki/ChangeLog'.</string>
+	<string name="how_to_pointer_issues">For bug reporting, go to: 'http://code.google.com/p/softkeyboard/issues/list'.</string>
+	<string name="how_to_pointer_site">For general details, go to: 'http://code.google.com/p/softkeyboard/'.</string>
+	
     <!-- Symbols that are commonly considered word separators in this language -->
     <!-- <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|-'`~&quot;1234567890</string>-->
     <!-- Indicates that a word has been added to the dictionary -->
