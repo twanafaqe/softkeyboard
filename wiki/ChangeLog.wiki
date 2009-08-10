@@ -1,9 +1,11 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
- * not decided yet. Probably:
-  * Suggestions
-  * Another Russian layout
+ I have not decided yet. Probably:
+ * Suggestions:
+  * User dictionary.
+  * Main dictionary (probably only in English in the first version).
+ * Another Russian layout
 
 = Latest released version =
 == Build 20090726 (note: different build semantics) ==
