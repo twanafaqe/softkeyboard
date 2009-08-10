@@ -9,9 +9,9 @@
 	        <meta-data android:name="android.view.im" android:resource="@xml/method" />
 	    </service>
 	    <activity android:name="SoftKeyboardSettings" android:label="Settings">
-	        <intent-filter>
+<!--        <intent-filter>
 	            <action android:name="android.intent.action.MAIN"/>
-	        </intent-filter>
+	        </intent-filter>-->
 	    </activity>
 	    <activity android:name=".MainForm"
                   android:label="@string/ime_name">
