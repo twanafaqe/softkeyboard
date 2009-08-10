@@ -18,8 +18,7 @@ public class DictionarySQLiteConnection extends SQLiteOpenHelper
 	protected final Context mContext;
 	
 	public DictionarySQLiteConnection(Context context, String dbName, String tableName, String wordsColumnName, String frequencyColumnName) {
-		super(context, dbName, null, 2);
-		
+		super(context, dbName, null, 3);
 		mContext = context;
 		mTableName = tableName;
 		mWordsColumnName = wordsColumnName;
@@ -63,7 +62,7 @@ public class DictionarySQLiteConnection extends SQLiteOpenHelper
     public List<String> getAllWords()
     {
     	List<String> words = new ArrayList<String>();
-    	SQLiteDatabase db = super.getReadableDatabase();
+    	SQLiteDatabase db = getReadableDatabase();
     	Cursor c = db.query(mTableName, new String[]{mWordsColumnName}, null, null, null, null, null);
     	
     	if (c != null)

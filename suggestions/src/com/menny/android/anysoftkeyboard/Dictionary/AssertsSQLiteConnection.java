@@ -12,10 +12,11 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
 	//The Android's default system path of your application database.
     private static final String DB_PATH = "/data/data/com.menny.android.anysoftkeyboard/databases/";
 
+    private final String mDbName;
+    private SQLiteDatabase mDataBase; 
     
-	private final String mDbName;
 	protected AssertsSQLiteConnection(Context conext, String dbName, String wordsTableName) throws IOException {
-		super(conext, dbName, wordsTableName, "Words", "Frequency");
+		super(conext, dbName, wordsTableName, "Word", "Frequency");
 		mDbName = dbName;
 		
 		createDataBase();
@@ -43,6 +44,24 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
 		   	}
 		}
 	}
+	
+	@Override
+	public synchronized void close() {
+		if(mDataBase != null)
+			mDataBase.close();
+		
+		mDataBase = null;
+		super.close();
+	}
+ 
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+	}
+ 
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { 
+	}
+
 
    /**
     * Check if the database already exist to avoid re-copying the file each time you open the application.
@@ -99,7 +118,11 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
    
    @Override
    public synchronized SQLiteDatabase getReadableDatabase() {
+	   if (mDataBase != null)
+		   return mDataBase;
+	   
 		String myPath = DB_PATH + mDbName;
-		return SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+		mDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+		return mDataBase;
    }
 }
