@@ -47,6 +47,7 @@ public class DictionaryFactory
 			break;
 		case Hebrew:
 			dict = new SQLiteSimpleHeDictionary(context);
+			break;
 		default:
 			return null;
 		}
