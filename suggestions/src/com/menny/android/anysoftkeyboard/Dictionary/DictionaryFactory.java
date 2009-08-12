@@ -1,39 +1,58 @@
 package com.menny.android.anysoftkeyboard.Dictionary;
 
+import java.util.HashMap;
+
 import android.util.Log;
 
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 
 public class DictionaryFactory 
 {
-	private static UserDictionaryBase mUserDictionary = null;
+	private static UserDictionaryBase msUserDictionary = null;
+	private static final HashMap<Dictionary.Language, Dictionary> msDictionaries;
+	
+	static
+	{
+		msDictionaries = new HashMap<Dictionary.Language, Dictionary>();
+	}
 	
 	public synchronized static UserDictionaryBase createUserDictionary(AnyKeyboardContextProvider context)
 	{
-		if (mUserDictionary == null)
+		if (msUserDictionary == null)
 		{
 			try
 	        {
-				mUserDictionary = new AndroidUserDictionary(context);
+				msUserDictionary = new AndroidUserDictionary(context);
 	        }
 	        catch(Exception ex)
 	        {
 	        	Log.w("AnySoftKeyboard", "Failed to load 'AndroidUserDictionary' (could be that the platform does not support it). Will use fall-back dictionary. Error:"+ex.getMessage());
-	        	mUserDictionary = new FallbackUserDictionary(context);
+	        	msUserDictionary = new FallbackUserDictionary(context);
 	        }
 		}
-        return mUserDictionary;
+        return msUserDictionary;
 	}
 	
-	public static Dictionary getDictionary(Dictionary.Language language, AnyKeyboardContextProvider context)
+	
+	public synchronized static Dictionary getDictionary(Dictionary.Language language, AnyKeyboardContextProvider context)
 	{
+		if (msDictionaries.containsKey(language))
+			return msDictionaries.get(language);
+		
+		Dictionary dict = null;
 		switch(language)
 		{
 		case English:
-			return new SQLiteSimpleEnDictionary(context);
+			dict = new SQLiteSimpleEnDictionary(context);
+			break;
+		case Hebrew:
+			dict = new SQLiteSimpleHeDictionary(context);
 		default:
 			return null;
-		} 
+		}
+		msDictionaries.put(language, dict);
+		
+		return dict;
 //		PackageManager packageManager = context.getApplicationContext().getPackageManager();
 //		
 //		String[] allDictionaryPackages = packageManager.getPackagesForUid(android.os.Process.myUid());

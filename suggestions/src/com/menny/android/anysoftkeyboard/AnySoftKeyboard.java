@@ -1151,7 +1151,7 @@ public class AnySoftKeyboard extends InputMethodService
 		if (mSuggest != null)
 		{
 			if (mKeyboardSwitcher.isAlphabetMode())
-				mSuggest.setMainDictionary(DictionaryFactory.getDictionary(Language.English, this));
+				mSuggest.setMainDictionary(DictionaryFactory.getDictionary(currentKeyboard.getDefaultDictionaryLanguage(), this));
 			else
 				mSuggest.setMainDictionary(null);
 		}

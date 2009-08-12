@@ -32,11 +32,14 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
 			Log.v("AnySoftKeyboard", "AssertsSQLiteConnection:createDataBase: Database exists.");
 			//do nothing - database already exist
 		}else{
+			/*
 			Log.d("AnySoftKeyboard", "AssertsSQLiteConnection:createDataBase: Database does not exist. Creating empty database file for "+mDbName);
 			//By calling this method and empty database will be created into the default system path
 		    //of your application so we are gonna be able to overwrite that database with our database.
-		   	super.getReadableDatabase();
-		
+		   	SQLiteDatabase newDB = super.getReadableDatabase();
+		   	//now, i need to close it.
+		   	newDB.close();
+			*/
 		   	try {		
 				copyDataBase();		
 			} catch (IOException e) {		
@@ -98,7 +101,7 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
    	// Path to the just created empty db
    	String outFileName = DB_PATH + mDbName;
 
-   	Log.d("AnySoftKeyboard", "AssertsSQLiteConnection: About to copy DB from assets to '"+outFileName+"'. Size: "+myInput.available());
+   	Log.d("AnySoftKeyboard", "***** AssertsSQLiteConnection: About to copy DB from assets to '"+outFileName+"'. Size: "+myInput.available());
    	//Open the empty db as the output stream
    	OutputStream myOutput = new FileOutputStream(outFileName);
 
@@ -113,7 +116,7 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
    	myOutput.flush();
    	myOutput.close();
    	myInput.close();
-   	Log.d("AnySoftKeyboard", "AssertsSQLiteConnection: DB was copied!");
+   	Log.d("AnySoftKeyboard", "***** AssertsSQLiteConnection: DB was copied!");
    }
    
    @Override
