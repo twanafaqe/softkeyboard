@@ -6,18 +6,13 @@ import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 
 public class SQLiteSimpleHeDictionary extends SQLiteUserDictionaryBase {
 
-	protected SQLiteSimpleHeDictionary(AnyKeyboardContextProvider anyContext) {
+	protected SQLiteSimpleHeDictionary(AnyKeyboardContextProvider anyContext) throws Exception {
 		super(anyContext);
 	}
 	
 	@Override
-	protected DictionarySQLiteConnection createStorage() {
-		try {
-			return new AssertsSQLiteConnection(mContext, "he", "he");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new DictionarySQLiteConnection(mContext, "he", "he", "Word", "Frequency");
-		}
+	protected DictionarySQLiteConnection createStorage() throws IOException {
+		return new AssertsSQLiteConnection(mContext, "he", "he");
 	}
 	
 	

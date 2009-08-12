@@ -1,12 +1,10 @@
 package com.menny.android.anysoftkeyboard.Dictionary;
 
-import java.io.IOException;
-
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 
 public class SQLiteSimpleEnDictionary extends SQLiteUserDictionaryBase {
 
-	protected SQLiteSimpleEnDictionary(AnyKeyboardContextProvider anyContext) {
+	protected SQLiteSimpleEnDictionary(AnyKeyboardContextProvider anyContext) throws Exception {
 		super(anyContext);
 	}
 	
@@ -14,7 +12,7 @@ public class SQLiteSimpleEnDictionary extends SQLiteUserDictionaryBase {
 	protected DictionarySQLiteConnection createStorage() {
 		try {
 			return new AssertsSQLiteConnection(mContext, "en", "en");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new DictionarySQLiteConnection(mContext, "en", "en", "Word", "Frequency");
 		}

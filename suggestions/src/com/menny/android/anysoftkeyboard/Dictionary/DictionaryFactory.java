@@ -27,7 +27,12 @@ public class DictionaryFactory
 	        catch(Exception ex)
 	        {
 	        	Log.w("AnySoftKeyboard", "Failed to load 'AndroidUserDictionary' (could be that the platform does not support it). Will use fall-back dictionary. Error:"+ex.getMessage());
-	        	msUserDictionary = new FallbackUserDictionary(context);
+	        	try {
+					msUserDictionary = new FallbackUserDictionary(context);
+				} catch (Exception e) {
+					Log.e("AnySoftKeyboard", "Failed to load failback user dictionary!");
+					e.printStackTrace();
+				}
 	        }
 		}
         return msUserDictionary;
@@ -40,18 +45,26 @@ public class DictionaryFactory
 			return msDictionaries.get(language);
 		
 		Dictionary dict = null;
-		switch(language)
+		try
 		{
-		case English:
-			dict = new SQLiteSimpleEnDictionary(context);
-			break;
-		case Hebrew:
-			dict = new SQLiteSimpleHeDictionary(context);
-			break;
-		default:
-			return null;
+			switch(language)
+			{
+			case English:
+				dict = new SQLiteSimpleEnDictionary(context);
+				break;
+			case Hebrew:
+				dict = new SQLiteSimpleHeDictionary(context);
+				break;
+			default:
+				return null;
+			}
+			msDictionaries.put(language, dict);
 		}
-		msDictionaries.put(language, dict);
+		catch(Exception ex)
+		{
+			Log.e("AnySoftKeyboard", "Failed to load main dictionary for: "+language);
+			ex.printStackTrace();
+		}
 		
 		return dict;
 //		PackageManager packageManager = context.getApplicationContext().getPackageManager();
@@ -94,5 +107,16 @@ public class DictionaryFactory
 //		}
 //		
 //		return null;
+	}
+
+
+	public synchronized static void close() {
+		if (msUserDictionary != null)
+			msUserDictionary.close();
+		for(Dictionary dict : msDictionaries.values())
+			dict.close();
+		
+		msUserDictionary = null;
+		msDictionaries.clear();
 	}
 }

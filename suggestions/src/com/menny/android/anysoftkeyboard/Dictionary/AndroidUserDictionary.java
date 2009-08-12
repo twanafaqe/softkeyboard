@@ -20,7 +20,7 @@ class AndroidUserDictionary extends UserDictionaryBase {
     
 	private ContentObserver mObserver;
     
-    public AndroidUserDictionary(AnyKeyboardContextProvider context) 
+    public AndroidUserDictionary(AnyKeyboardContextProvider context) throws Exception 
     {
     	super(context);
         

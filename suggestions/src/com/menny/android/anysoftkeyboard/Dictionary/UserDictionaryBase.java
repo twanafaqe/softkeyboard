@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.menny.android.anysoftkeyboard.AnyKeyboardContextProvider;
 import com.menny.android.anysoftkeyboard.WordComposer;
@@ -49,7 +50,7 @@ public abstract class UserDictionaryBase extends Dictionary {
     
     protected boolean mRequiresReload;
     
-    protected UserDictionaryBase(AnyKeyboardContextProvider anyContext) {
+    protected UserDictionaryBase(AnyKeyboardContextProvider anyContext) throws Exception {
     	mContext = anyContext.getApplicationContext();
     	mAnyContext = anyContext;
     	mRoots = new ArrayList<Node>();
@@ -57,18 +58,19 @@ public abstract class UserDictionaryBase extends Dictionary {
     	loadDictionary();
     }
     
+    @Override
 	public synchronized void close() {
         closeAllResources();
     }
 
 	protected abstract void closeAllResources();
     
-    private synchronized void loadDictionary() {
+    private synchronized void loadDictionary() throws Exception {
         loadAllWords();
         mRequiresReload = false;
     }
 
-	protected abstract void loadAllWords();
+	protected abstract void loadAllWords() throws Exception;
 
     /**
      * Adds a word to the dictionary and makes it persistent.
@@ -79,7 +81,15 @@ public abstract class UserDictionaryBase extends Dictionary {
      * @TODO use a higher or float range for frequency
      */
     public synchronized void addWord(String word, int frequency) {
-        if (mRequiresReload) loadDictionary();
+        if (mRequiresReload) 
+    	{
+        	try {
+				loadDictionary();
+			} catch (Exception e) {
+				Log.e("AnySoftKeyboard", "Failed to load database while adding word");
+				e.printStackTrace();
+			}
+    	}
         // Safeguard against adding long words. Can cause stack overflow.
         if (word.length() >= MAX_WORD_LENGTH) return;
         addWordRec(mRoots, word, 0, frequency);
@@ -94,7 +104,15 @@ public abstract class UserDictionaryBase extends Dictionary {
 
     @Override
     public synchronized void getWords(final WordComposer codes, final WordCallback callback) {
-        if (mRequiresReload) loadDictionary();
+        if (mRequiresReload)
+        {
+        	try {
+				loadDictionary();
+			} catch (Exception e) {
+				Log.e("AnySoftKeyboard", "Failed to load database while adding word");
+				e.printStackTrace();
+			}
+        }
         mInputLength = codes.size();
         mMaxDepth = mInputLength * 3;
         getWordsRec(mRoots, codes, mWordBuilder, 0, false, 1.0f, 0, callback);
@@ -102,7 +120,15 @@ public abstract class UserDictionaryBase extends Dictionary {
 
     @Override
     public synchronized boolean isValidWord(CharSequence word) {
-        if (mRequiresReload) loadDictionary();
+        if (mRequiresReload)
+        {
+        	try {
+				loadDictionary();
+			} catch (Exception e) {
+				Log.e("AnySoftKeyboard", "Failed to load database while adding word");
+				e.printStackTrace();
+			}
+        }
         return isValidWordRec(mRoots, word, 0, word.length());
     }
     

@@ -36,7 +36,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
 import com.menny.android.anysoftkeyboard.Dictionary.*;
-import com.menny.android.anysoftkeyboard.Dictionary.Dictionary.Language;
 import com.menny.android.anysoftkeyboard.KeyboardSwitcher.NextKeyboardType;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard;
 import com.menny.android.anysoftkeyboard.keyboards.AnyKeyboard.HardKeyboardTranslator;
@@ -207,7 +206,8 @@ public class AnySoftKeyboard extends InputMethodService
     }
     
     @Override public void onDestroy() {
-        mUserDictionary.close();
+        DictionaryFactory.close();
+        
         //unregisterReceiver(mReceiver);
         
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);

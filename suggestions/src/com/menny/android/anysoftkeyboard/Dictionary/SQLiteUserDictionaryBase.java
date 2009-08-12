@@ -10,12 +10,12 @@ public abstract class SQLiteUserDictionaryBase extends UserDictionaryBase {
 
 	private DictionarySQLiteConnection mStorage;
 	
-	protected SQLiteUserDictionaryBase(AnyKeyboardContextProvider anyContext) {
+	protected SQLiteUserDictionaryBase(AnyKeyboardContextProvider anyContext) throws Exception {
 		super(anyContext);
 	}
 
 	@Override
-	protected void loadAllWords() 
+	protected void loadAllWords() throws Exception 
 	{
 		if (mStorage == null)
 			mStorage = createStorage();
@@ -28,7 +28,7 @@ public abstract class SQLiteUserDictionaryBase extends UserDictionaryBase {
 		}
 	}
 
-	protected abstract DictionarySQLiteConnection createStorage();
+	protected abstract DictionarySQLiteConnection createStorage() throws Exception;
 
 	@Override
 	protected void AddWordToStorage(String word, int frequency) {

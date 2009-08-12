@@ -40,11 +40,7 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
 		   	//now, i need to close it.
 		   	newDB.close();
 			*/
-		   	try {		
-				copyDataBase();		
-			} catch (IOException e) {		
-		   		throw new Error("Error copying database");		
-		   	}
+		   	copyDataBase();
 		}
 	}
 	
@@ -103,7 +99,11 @@ class AssertsSQLiteConnection extends DictionarySQLiteConnection {
 
    	Log.d("AnySoftKeyboard", "***** AssertsSQLiteConnection: About to copy DB from assets to '"+outFileName+"'. Size: "+myInput.available());
    	//Open the empty db as the output stream
-   	OutputStream myOutput = new FileOutputStream(outFileName);
+   	File databaseFile = new File(outFileName);
+   	if (!databaseFile.exists())
+   		databaseFile.createNewFile();
+   	
+   	OutputStream myOutput = new FileOutputStream(outFileName, false);
 
    	//transfer bytes from the inputfile to the outputfile
    	byte[] buffer = new byte[1024];

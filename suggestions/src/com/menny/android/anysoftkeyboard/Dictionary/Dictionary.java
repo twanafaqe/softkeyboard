@@ -95,4 +95,5 @@ abstract public class Dictionary {
         return true;
     }
 
+    public abstract void close();
 }
