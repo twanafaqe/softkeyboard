@@ -20,7 +20,7 @@ This page includes the development tools I used for developing AnySoftKeyboard
   * Download from [http://www.google.com/url?sa=t&source=web&ct=res&cd=1&url=http%3A%2F%2Ftortoisesvn.tigris.org%2F&ei=Nb-DSvPgPI-5jAf63rmRCA&usg=AFQjCNE3AGLQNZb9GvR1WVhdQ8oQGhIG7Q&sig2=GoWE4CpmWuLpP0uGEIzxgA here]
 
 == Word list generator ==
-For the dictionaries, I used a simple C# application I've wrote. You can download it from here. The source code is here.
+For the dictionaries, I used a simple C# application I've wrote. You can download it from [http://softkeyboard.googlecode.com/files/WordListCreator.zip here]. The source code is [http://softkeyboard.googlecode.com/files/WordListCreator_source.zip here].
 For creating a word list, I suggest using forums or other dialog-centric sites, since most of the time we use the phone for dialogs, so it is nice that the dictionary is dialog oriented.
 
 == Images ==
