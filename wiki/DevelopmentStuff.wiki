@@ -1,8 +1,9 @@
 #summary Development tools used in this project
+#labels Featured
 
 = Introduction =
 
-This page includes the development tools I used for developing AnySoftKeyboard
+This page includes the development tools I used for developing !AnySoftKeyboard
 
 == SDK ==
  * Android SDK 1.5 r3
