@@ -12,9 +12,9 @@ import android.util.Log;
 
 public class DictionarySQLiteConnection extends SQLiteOpenHelper
 {
-	private final String mTableName;
-	private final String mWordsColumnName;
-	private final String mFrequencyColumnName;
+	protected final String mTableName;
+	protected final String mWordsColumnName;
+	protected final String mFrequencyColumnName;
 	protected final Context mContext;
 	
 	public DictionarySQLiteConnection(Context context, String dbName, String tableName, String wordsColumnName, String frequencyColumnName) {

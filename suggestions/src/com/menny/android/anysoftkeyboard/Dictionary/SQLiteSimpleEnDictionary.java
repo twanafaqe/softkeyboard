@@ -11,7 +11,7 @@ public class SQLiteSimpleEnDictionary extends SQLiteUserDictionaryBase {
 	@Override
 	protected DictionarySQLiteConnection createStorage() {
 		try {
-			return new AssertsSQLiteConnection(mContext, "en", "en");
+			return new AssertsSQLiteConnection(mContext, "en", "en", 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new DictionarySQLiteConnection(mContext, "en", "en", "Word", "Frequency");
