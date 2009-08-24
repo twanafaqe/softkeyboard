@@ -2,12 +2,18 @@
 #labels Featured
 = Upcoming version =
 I have not decided yet. Probably:
- * Suggestions:
-  * User dictionary.
-  * Main dictionary (probably only in English in the first version).
+ * Performance fixes
+ * Better dictionaries for Hebrew and English
  * Another Russian layout
 
 = Latest released version =
+== Build 20090817 ==
+ * Suggestions!
+  * User dictionary
+  * main dictionary in Hebrew and English.
+ * Many other bug fixes.
+
+= Previous versions =
 == Build 20090726 (note: different build semantics) ==
  * New layout - the DEL key has been moved, new Smiley key.
  * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
@@ -16,8 +22,6 @@ I have not decided yet. Probably:
  * Bug fix: Symbols layouts will loop on repeated swipe and SHIFT clicks.
  * Bug fix: Accents are working in shift now...
  * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin, Andrej Živec)
-
-= Previous versions =
 == Build 20072009 ==
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
