@@ -14,6 +14,6 @@
  * Make the system partition writable:
   * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
  * Copy the fonts to the SDCARD, by typing the following command:
-  * adb push c:\adb\*.ttf /system/fonts
+  * adb push c:\adb\ /system/fonts/
  * We're done - just reboot the device:
   * adb shell reboot
