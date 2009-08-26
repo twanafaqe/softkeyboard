@@ -5,6 +5,7 @@ I have not decided yet. Probably:
  * Performance fixes
  * Better dictionaries for Hebrew and English
  * Another Russian layout
+ * Samsung Galaxy RTL support.
 
 = Latest released version =
 == Build 20090817 ==
