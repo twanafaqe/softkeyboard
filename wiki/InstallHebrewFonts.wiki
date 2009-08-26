@@ -13,7 +13,7 @@
  * Change directory to the ADB folder.
  * Make the system partition writable:
   * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
- * Copy the fonts to the SDCARD, by typing the following command:
+ * Copy the fonts to the system partition, by typing the following command (in this example I assume the fonts are stored on the local computer at "c:\adb\"):
   * adb push c:\adb\ /system/fonts/
  * We're done - just reboot the device:
   * adb shell reboot
