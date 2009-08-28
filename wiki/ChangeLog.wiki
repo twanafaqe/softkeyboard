@@ -3,18 +3,22 @@
 = Upcoming version =
 I have not decided yet. Probably:
  * Performance fixes
- * Better dictionaries for Hebrew and English
+ * More dictionaries.
  * Another Russian layout
- * Samsung Galaxy RTL support.
 
 = Latest released version =
+== Build 20090827 ==
+ * Performance gain.
+ * Better dictionaries for Hebrew and English
+ * Some bug fixes.
+ * Samsung Galaxy RTL support.
+
+= Previous versions =
 == Build 20090817 ==
  * Suggestions!
   * User dictionary
   * main dictionary in Hebrew and English.
  * Many other bug fixes.
-
-= Previous versions =
 == Build 20090726 (note: different build semantics) ==
  * New layout - the DEL key has been moved, new Smiley key.
  * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
