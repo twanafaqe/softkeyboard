@@ -5,6 +5,7 @@ I have not decided yet. Probably:
  * Another Russian layout
  * Performance fixes
  * Bug fixes
+ * French dictionary
  * More dictionaries
 
 = Latest released version =
