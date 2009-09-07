@@ -20,5 +20,5 @@
 
 ==More information==
 You can get help on how to do it at various forums across the internet.
-http://forum.xda-developers.com/showthread.php?t=442480 (The best!)
-http://iandroid.co.il/phpBB3/viewtopic.php?f=5&t=601 (Hebrew)
+ * http://forum.xda-developers.com/showthread.php?t=442480 (The best!)
+ * http://iandroid.co.il/phpBB3/viewtopic.php?f=5&t=601 (Hebrew)
