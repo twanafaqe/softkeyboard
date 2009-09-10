@@ -5,9 +5,10 @@
 Here we'll learn how to install, use, and setup Any Soft Keyboard.
 
 ==Installing and enabling==
-Open Android Market, and lookup "Any Soft Keyboard".
+Open Android Market, and look-up "!AnySoftKeyboard".
 
 Click "Install". Note: this keyboard can use the phone's vibration functionality.
+ * You can get !AnySoftKeyboard from several other sites [http://code.google.com/p/softkeyboard/wiki/HowToGetIt too]
 
 After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Locale&text".
 
