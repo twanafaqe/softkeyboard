@@ -15,7 +15,7 @@ In the Search bar type: "anysoftkeyboard"
 http://softkeyboard.googlecode.com/files/search-market.png
 
 Press the search icon.
-You'll get a list with AnySoftKeyboard.
+You'll get a list with !AnySoftKeyboard.
 
 http://softkeyboard.googlecode.com/files/found-market.png
 
@@ -26,12 +26,12 @@ http://softkeyboard.googlecode.com/files/install-market.png
 That's it.
 You can view the application page at the Market [here http://www.cyrket.com/package/com.menny.android.anysoftkeyboard]
 
-= AndAppStore =
+= !AndAppStore =
 Instructions will be added soon.
 
-= AppsLib http://appslib.com/ =
+= !AppsLib http://appslib.com/ =
 Instructions will be added soon.
 
-= SlideMe http://slideme.org/ = 
+= !SlideMe http://slideme.org/ = 
 https://slideme.org/application/anysoftkeyboard
 Instructions will be added soon.
