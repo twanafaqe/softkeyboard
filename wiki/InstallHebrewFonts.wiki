@@ -8,7 +8,7 @@ Or you can read on...
 
 ==Required==
  # A rooted Android. If you want to know how to root an Android, read about it [http://haykuro.theiphoneproject.org/?page_id=35 here].
- # fonts (Hebrew fonts can be downloaded from [http://softkeyboard.googlecode.com/files/cm_fonts.rar here]
+ # fonts (Cyanogen's fonts can be downloaded from [http://softkeyboard.googlecode.com/files/cm_fonts.rar here])
  # [http://softkeyboard.googlecode.com/files/usb_driver_1.6-r1.rar ADB tool], which is a part of the Android SDK.
  # You may need to install the drivers. Get them from [http://softkeyboard.googlecode.com/files/usb_driver_1.6-r1.rar here].
 
