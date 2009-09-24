@@ -1,16 +1,16 @@
 #labels Phase-Support,Featured
-=How to install Hebrew fonts in Android=
+=How to install fonts in Android=
 
 ==Note==
-The latest Cyanogen build (4.1.9.2 or higher) include the Hebrew fonts already!!
+The latest Cyanogen build (4.1.9.2 or higher) include the many glyphs! Including Hebrew.
 So, if you have a rooted phone, I suggest to install CyanogenMOD ROM [http://forum.xda-developers.com/forumdisplay.php?f=448 get it here].
 Or you can read on...
 
 ==Required==
  # A rooted Android. If you want to know how to root an Android, read about it [http://haykuro.theiphoneproject.org/?page_id=35 here].
- # fonts (Hebrew fonts can be downloaded from [http://softkeyboard.googlecode.com/files/hebdroid.zip here]
- # [http://softkeyboard.googlecode.com/files/adb.rar ADB tool], which is a part of the Android SDK.
- # You may need to install the drivers. Get them from [http://softkeyboard.googlecode.com/files/usb_driver.rar here].
+ # fonts (Hebrew fonts can be downloaded from [http://softkeyboard.googlecode.com/files/cm_fonts.rar here]
+ # [http://softkeyboard.googlecode.com/files/usb_driver_1.6-r1.rar ADB tool], which is a part of the Android SDK.
+ # You may need to install the drivers. Get them from [http://softkeyboard.googlecode.com/files/usb_driver_1.6-r1.rar here].
 
 ==Steps==
  * Connect your phone using USB to the computer.
