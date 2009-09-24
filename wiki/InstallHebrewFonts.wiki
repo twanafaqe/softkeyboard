@@ -14,7 +14,7 @@ Or you can read on...
 
 ==Steps==
  * Connect your phone using USB to the computer.
- * Unzip the Hebrew fonts to the ADB folder, e.g., "c:\adb\"
+ * Unzip the fonts to the ADB folder, e.g., "c:\adb\"
  * Change directory to the ADB folder.
  * Make the system partition writable:
   * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
