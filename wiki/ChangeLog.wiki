@@ -2,18 +2,21 @@
 #labels Featured
 = Upcoming version =
 I have not decided yet. Probably:
+ * Gregorian and Burmese layouts
+ * Themes?
+
+= Latest released version =
+== Build 20091004 ==
  * Belorussian, Portuguese layouts - both were done by external programmers :)
  * Performance fixes
  * Localization
  * Bug fixes
 
-= Latest released version =
+= Previous versions =
 == Build 20090919 ==
  * Arabic layout
  * Additional localizations
  * Additional dictionaries
-
-= Previous versions =
 == Build 20090907 ==
  * Another Russian layout
  * French, German, Spanish, Swedish, Russian dictionaries
