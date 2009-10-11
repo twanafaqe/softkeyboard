@@ -8,12 +8,7 @@
 	android:id="@+id/welcome"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    />
-    
-    <TextView  
-    android:id="@+id/locale"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
+    android:textStyle="bold"
     />
     <TextView  
     android:id="@+id/locale"
@@ -23,7 +18,8 @@
     <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Device:"
+    android:text="Device information:"
+    android:textStyle="bold"
     />
     <TextView  
     android:id="@+id/brand"
@@ -63,7 +59,8 @@
     <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="OS:"
+    android:text="OS Information:"
+    android:textStyle="bold"
     />
     <TextView  
     android:id="@+id/build"
@@ -100,4 +97,10 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     />
+    <Button
+    android:text="Email list"
+    android:id="@+id/send_email_button"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    ></Button>
 </LinearLayout>
