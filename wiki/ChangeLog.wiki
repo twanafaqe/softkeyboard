@@ -4,7 +4,7 @@
 I have not decided yet. Probably:
  * Gregorian, Persian, and Burmese layouts
  * Themes?
- * Bugs (129, 132)
+ * Bugs (129, 132, 135)
 
 = Latest released version =
 == Build 20091004 ==
