@@ -1,6 +1,8 @@
 #labels Phase-Support,Featured
 =How to install fonts in Android=
 
+*Rooting an unrooted device will revoke your warranty!*
+
 ==Note==
 The latest Cyanogen build (4.1.9.2 or higher) include the many glyphs! Including Hebrew.
 So, if you have a rooted phone, I suggest to install CyanogenMOD ROM [http://forum.xda-developers.com/forumdisplay.php?f=448 get it here].
