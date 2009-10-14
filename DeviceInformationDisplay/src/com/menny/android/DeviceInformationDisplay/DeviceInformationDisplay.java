@@ -31,13 +31,15 @@ public class DeviceInformationDisplay extends Activity implements OnClickListene
 			setTextOfLabel(R.id.product, "Product: "+android.os.Build.PRODUCT);
 			setTextOfLabel(R.id.tags, "TAGS: "+android.os.Build.TAGS);
 			
-			setTextOfLabel(R.id.build, "Build release "+android.os.Build.VERSION.RELEASE + ", Inc: "+android.os.Build.VERSION.INCREMENTAL);
+			setTextOfLabel(R.id.build, "Build release "+android.os.Build.VERSION.RELEASE + ", Inc: '"+android.os.Build.VERSION.INCREMENTAL+"'");
 			setTextOfLabel(R.id.display_build, "Display build: "+android.os.Build.DISPLAY);
 			setTextOfLabel(R.id.fingerprint, "Finger print: "+android.os.Build.FINGERPRINT);
 			setTextOfLabel(R.id.build_id, "Build ID: "+android.os.Build.ID);
 			setTextOfLabel(R.id.time, "Time: "+android.os.Build.TIME);
 			setTextOfLabel(R.id.type, "Type: "+android.os.Build.TYPE);
 			setTextOfLabel(R.id.user, "User: "+android.os.Build.USER);
+			
+			setTextOfLabel(R.id.ltr_workaround, "LTR workaround: "+ltrWorkaroundRequired());
 			
 			Button sendEmail = (Button)super.findViewById(R.id.send_email_button);
 			sendEmail.setOnClickListener(this);
@@ -54,6 +56,33 @@ public class DeviceInformationDisplay extends Activity implements OnClickListene
 		mReport = mReport + "\n" + text;
     }
 
+    private static String ltrWorkaroundRequired()
+    {
+    	String requiresRtlWorkaround = "defaulting to true";//all devices required this fix (in 1.6 it is still required)
+		
+		if (android.os.Build.MODEL.toLowerCase().contains("galaxy"))
+		{
+			try
+			{
+				final int buildInc = Integer.parseInt(android.os.Build.VERSION.INCREMENTAL);
+				if (buildInc < 20090903)
+				{
+					requiresRtlWorkaround = "galaxy without the fix";
+				}
+				else
+				{
+					requiresRtlWorkaround = "galaxy WITH the fix";
+				}
+			}
+			catch(Exception ex)
+			{
+				requiresRtlWorkaround = "Error: "+ex.getMessage();//if it is like that, then I do not know, and rather say WORKAROUND!
+			}
+		}
+		
+		return requiresRtlWorkaround;
+    }
+    
 	@Override
 	public void onClick(View arg0) {
 		/* Create the Intent */  
