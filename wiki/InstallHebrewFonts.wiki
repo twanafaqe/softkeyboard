@@ -19,6 +19,7 @@ Or you can read on...
  * Unzip the fonts to the ADB folder, e.g., "c:\adb\"
  * Change directory to the ADB folder.
  * Make the system partition writable:
+  * adb root
   * adb shell mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
  * Copy the fonts to the system partition, by typing the following command (in this example I assume the fonts are stored on the local computer at "c:\adb\"):
   * adb push c:\adb\ /system/fonts/
