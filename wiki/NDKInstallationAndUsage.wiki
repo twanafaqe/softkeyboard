@@ -50,7 +50,7 @@ _Tested with Windows 7 RC1, 64bit. Should also work with XP (32bit) and Vista (3
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/Apps/Android_NDK/android-ndk-1.6_r1}}} and press _Enter_. Note that folder names and commands are case-sensitive. You can use tab to auto-complete folder names. If you installed NDK to c drive remember to change {{{/cygdrive/d/}}} to {{{/cygdrive/c/}}}.
  # Type {{{build/host-setup.sh}}} and press _Enter_. You should see following output:
-TODO: INSERT IMAGE
+[http://softkeyboard.googlecode.com/files/ndk_usage_1.png]
 
  # If everything works correctly it should say "Host setup complete".
  # Type {{{make APP=nativeime}}} and press _Enter_ to compile native code.
