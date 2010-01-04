@@ -10,6 +10,10 @@ This page includes the development tools I used for developing !AnySoftKeyboard
   * Download from [http://developer.android.com/sdk/1.5_r3/index.html here]
   * Install instructions [http://developer.android.com/sdk/1.5_r3/installing.html here]
 
+== NDK ==
+ * Android 1.6 NDK, r1
+   * Download from [http://developer.android.com/sdk/ndk/1.6_r1/index.html here]
+   * Install instructions and usage [NDKInstallationAndUsage here]
 == IDE ==
  * Eclipse
   * Download from [http://www.eclipse.org/downloads/ here]. I used the Java Developers edition.
