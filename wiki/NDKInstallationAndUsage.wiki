@@ -40,7 +40,7 @@ Quite similar to Linux.
 Assumptions: softkeyboard SVN root is in {{{d:\softkeyboard}}}. This folder should contain "project" folder and file called {{{Application.mk}}}.
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/Apps/Android_NDK/android-ndk-1.6_r1/apps}}} and press _Enter_.
- # Type {{{ln -s /cygdrive/d/softkeyboard nativeime}}} and press _Enter.
+ # Type {{{ln -s /cygdrive/d/softkeyboard nativeime}}} and press _Enter_.
 
 = Building (nativeime component) =
 
