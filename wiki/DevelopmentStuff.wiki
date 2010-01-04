@@ -21,7 +21,7 @@ This page includes the development tools I used for developing !AnySoftKeyboard
   * Download from [http://www.google.com/url?sa=t&source=web&ct=res&cd=1&url=http%3A%2F%2Ftortoisesvn.tigris.org%2F&ei=Nb-DSvPgPI-5jAf63rmRCA&usg=AFQjCNE3AGLQNZb9GvR1WVhdQ8oQGhIG7Q&sig2=GoWE4CpmWuLpP0uGEIzxgA here]
 
 == NDK ==
-Only needed for native (C++) code parts.
+Needed *only* for native (C++) code parts. If you're not touching C++ code, you do not need to install this
  * Android 1.6 NDK r1
    * Download from [http://developer.android.com/sdk/ndk/1.6_r1/index.html here]
    * Install instructions and usage [NDKInstallationAndUsage here]
