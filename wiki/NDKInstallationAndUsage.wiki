@@ -15,7 +15,7 @@ Documentation, samples, and tutorials
 
 _(From [http://developer.android.com/sdk/ndk/1.6_r1/index.html Android NDK web site])_
 
-Currently, anysoftkeyboard uses NDK only for dictionary querying.
+Currently, anysoftkeyboard uses NDK only for dictionary querying. See issue [http://code.google.com/p/softkeyboard/issues/detail?id=204 204]
 
 = Installation =
 
