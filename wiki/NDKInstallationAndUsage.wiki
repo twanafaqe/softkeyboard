@@ -40,7 +40,7 @@ Quite similar to Linux.
 Assumptions: softkeyboard SVN root is in {{{d:\softkeyboard}}}. This folder should contain "project" folder and file called {{{Application.mk}}}.
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/Apps/Android_NDK/android-ndk-1.6_r1/apps}}} and press _Enter_.
- # Type {{{ln -s /cygdrive/d/softkeyboard nativeime}}} and press _Enter_.
+ # Type {{{ln -s /cygdrive/d/softkeyboard nativeime}}} and press _Enter_. This creates [http://en.wikipedia.org/wiki/Symbolic_link symbolic link] from NDK {{{apps}}} to native project folder.
 
 = Building (nativeime component) =
 
@@ -49,14 +49,15 @@ Assumptions: softkeyboard SVN root is in {{{d:\softkeyboard}}}. This folder shou
 _Tested with Windows 7 RC1, 64bit. Should also work with XP (32bit) and Vista (32bit & 64bit) according to NDK web site._
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/Apps/Android_NDK/android-ndk-1.6_r1}}} and press _Enter_. Note that folder names and commands are case-sensitive. You can use tab to auto-complete folder names. If you installed NDK to c drive remember to change {{{/cygdrive/d/}}} to {{{/cygdrive/c/}}}.
- # Type {{{build/host-setup.sh}}} and press _Enter_. You should see following output:
-[http://softkeyboard.googlecode.com/files/ndk_usage_1.png]
+ # Type {{{build/host-setup.sh}}} and press _Enter_. This setups the build environment using the apps configured in one-time setup step. You should see following output:
+[http://softkeyboard.googlecode.com/files/ndk_usage_1.png].
 
  # If everything works correctly it should say "Host setup complete".
- # Type {{{make APP=nativeime}}} and press _Enter_ to compile native code.
+ # Type {{{make APP=nativeime}}} and press _Enter_ to compile native code. This builds app named {{{nativeime}}}. Application name should match name of symbolic link which was setup in one-time setup step.
   * If everything goes OK, {{{libnativeime.so}}} should appear in {{{<SVN_ROOT>/project/libs/armeabi}}} where {{{<SVN_ROOT>}}} stands for root of anysoftkeyboard svn ({{{d:\softkeyboard}}}).
-  * You can force rebuild by {{{make APP=nativeime -B}}}
- # Continue using Eclipse as normal, it includes the above component automatically next time it build java code.
+  * If there's compilation errors, they are shown.
+  * You can force rebuild by {{{make APP=nativeime -B}}}. By default compilation is done when it's needed (if the code is changed).
+ # Continue using Eclipse as normal, it includes the above component (the {{{so}}} file) automatically next time it builds the java code.
 
 == Linux ==
 Similar to Windows: Open console window instead of running {{{Cygwin.bat}}}.
