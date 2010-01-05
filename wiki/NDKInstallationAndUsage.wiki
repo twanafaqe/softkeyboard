@@ -53,7 +53,7 @@ _Tested with Windows 7 RC1, 64bit. Should also work with XP (32bit) and Vista (3
 [http://softkeyboard.googlecode.com/files/ndk_usage_1.png].
 
  # If everything works correctly it should say "Host setup complete".
- # Type {{{make APP=nativeime}}} and press _Enter_ to compile native code. This builds app named {{{nativeime}}}. Application name should match name of symbolic link which was setup in one-time setup step.
+ # Type {{{make APP=nativeime}}} and press _Enter_ to compile native code. This builds app named {{{nativeime}}}. Application name should match name of symbolic link which was setup in one-time setup step. In addition, the name must match {{{LOCAL_MODULE}}} in {{{project/jni/Android.mk}}}.
   * If everything goes OK, {{{libnativeime.so}}} should appear in {{{<SVN_ROOT>/project/libs/armeabi}}} where {{{<SVN_ROOT>}}} stands for root of anysoftkeyboard svn ({{{d:\softkeyboard}}}).
   * If there's compilation errors, they are shown.
   * You can force rebuild by {{{make APP=nativeime -B}}}. By default compilation is done when it's needed (if the code is changed).
