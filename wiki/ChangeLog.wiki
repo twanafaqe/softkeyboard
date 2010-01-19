@@ -4,8 +4,6 @@
 Major issues:
  * Some layouts
  * Some bugs
- * Better dictionary mechanism
- * New icons
 All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=257 here]
 
 = Latest released version =
