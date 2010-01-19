@@ -6,9 +6,16 @@ Major issues:
  * Some bugs
  * Better dictionary mechanism
  * New icons
-All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=190 here]
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=257 here]
 
 = Latest released version =
+= Build 20100119 =
+ * Some layouts
+ * Some bugs
+ * Better dictionary mechanism
+ * New icons
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=190 here]
+
 == Build 20091122 ==
  * Colemak, Ukrainian layouts - both were done by external programmers :)
  * Performance fixes
