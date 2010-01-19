@@ -1,4 +1,4 @@
-#summary Binary dictionary is the future dictionary format in softkeyboard. This pages guides how to create them.
+#summary Binary dictionary is the dictionary format in softkeyboard. This pages guides how to create them.
 
 = Binary Dictionaries =
 Binary dictionary format is an efficient and compact way to store dictionaries. The format is defined in LatinIME input method (Android default keyboard), which is part of the open source Android platform. 
