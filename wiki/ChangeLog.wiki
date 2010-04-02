@@ -2,11 +2,18 @@
 #labels Featured
 = Upcoming version =
 Major issues:
- * Some layouts
- * Some bugs
-All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=257 here]
+ * Some bug fixes
+ * External packages
 
 = Latest released version =
+= Build 20100328 =
+ * Some layouts
+ * Some bugs
+ * New keyboard layout loading mechanism - will allow external packages
+ * Hi-Def devices support (Nexus One, Droid)
+
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=257 here]
+
 = Build 20100119 =
  * Some layouts
  * Some bugs
