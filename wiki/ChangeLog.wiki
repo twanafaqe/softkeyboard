@@ -5,6 +5,8 @@ Major issues:
  * Some bug fixes
  * External packages
 
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=317 here]
+
 = Latest released version =
 = Build 20100328 =
  * Some layouts
