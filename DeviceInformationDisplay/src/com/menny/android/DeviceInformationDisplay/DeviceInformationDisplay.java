@@ -4,83 +4,75 @@ package com.menny.android.DeviceInformationDisplay;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DeviceInformationDisplay extends Activity implements OnClickListener {
 	private String mReport = "Empty";
+	private LinearLayout mLayout;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+        mLayout = (LinearLayout)findViewById(R.id.layout);
         mReport = "Device information report:\n";
         try {
         	PackageInfo info = super.getApplication().getPackageManager().getPackageInfo(getApplication().getPackageName(), 0);
 			
-			setTextOfLabel(R.id.welcome, "Welcome to Device Information v"+info.versionName);
-			setTextOfLabel(R.id.locale, "Locale: "+getResources().getConfiguration().locale.toString());
-			setTextOfLabel(R.id.board, "Board: "+android.os.Build.BOARD);
-			setTextOfLabel(R.id.brand, "Brand: "+android.os.Build.BRAND);
-			setTextOfLabel(R.id.device, "Device: "+android.os.Build.DEVICE);
-			setTextOfLabel(R.id.model, "Model: "+android.os.Build.MODEL);
-			setTextOfLabel(R.id.product, "Product: "+android.os.Build.PRODUCT);
-			setTextOfLabel(R.id.tags, "TAGS: "+android.os.Build.TAGS);
+			setTextOfLabel(true, "ASK Device Info v"+info.versionName+"("+info.versionCode+")");
+			setTextOfLabel(false, getAskVersion());
+			setTextOfLabel(false, "Locale: "+getResources().getConfiguration().locale.toString());
+			setTextOfLabel(true, "** Device:");
+			setTextOfLabel(false, "Board: "+android.os.Build.BOARD);
+			setTextOfLabel(false, "Brand: "+android.os.Build.BRAND);
+			setTextOfLabel(false, "Device: "+android.os.Build.DEVICE);
+			setTextOfLabel(false, "Model: "+android.os.Build.MODEL);
+			setTextOfLabel(false, "Product: "+android.os.Build.PRODUCT);
+			setTextOfLabel(false, "TAGS: "+android.os.Build.TAGS);
 			
-			setTextOfLabel(R.id.build, "Build release "+android.os.Build.VERSION.RELEASE + ", Inc: '"+android.os.Build.VERSION.INCREMENTAL+"'");
-			setTextOfLabel(R.id.display_build, "Display build: "+android.os.Build.DISPLAY);
-			setTextOfLabel(R.id.fingerprint, "Finger print: "+android.os.Build.FINGERPRINT);
-			setTextOfLabel(R.id.build_id, "Build ID: "+android.os.Build.ID);
-			setTextOfLabel(R.id.time, "Time: "+android.os.Build.TIME);
-			setTextOfLabel(R.id.type, "Type: "+android.os.Build.TYPE);
-			setTextOfLabel(R.id.user, "User: "+android.os.Build.USER);
+			setTextOfLabel(true, "** OS:");
+			setTextOfLabel(false, "Build release "+android.os.Build.VERSION.RELEASE + ", Inc: '"+android.os.Build.VERSION.INCREMENTAL+"'");
+			setTextOfLabel(false, "Display build: "+android.os.Build.DISPLAY);
+			setTextOfLabel(false, "Finger print: "+android.os.Build.FINGERPRINT);
+			setTextOfLabel(false, "Build ID: "+android.os.Build.ID);
+			setTextOfLabel(false, "Time: "+android.os.Build.TIME);
+			setTextOfLabel(false, "Type: "+android.os.Build.TYPE);
+			setTextOfLabel(false, "User: "+android.os.Build.USER);
 			
-			setTextOfLabel(R.id.ltr_workaround, "LTR workaround: "+ltrWorkaroundRequired());
-			
-			Button sendEmail = (Button)super.findViewById(R.id.send_email_button);
+			Button sendEmail = new Button(this);
+			sendEmail.setText("Send report...");
 			sendEmail.setOnClickListener(this);
+			mLayout.addView(sendEmail);
 		} catch (Exception e) {
 			e.printStackTrace();
-			setTextOfLabel(R.id.welcome, "Exception: "+e.toString());
+			setTextOfLabel(true, "Exception: "+e.toString());
 		}
     }
     
-    private void setTextOfLabel(int resId, String text)
-    {
-    	TextView label = (TextView)super.findViewById(resId);
-		label.setText(text);
-		mReport = mReport + "\n" + text;
-    }
-
-    private static String ltrWorkaroundRequired()
-    {
-    	String requiresRtlWorkaround = "defaulting to true";//all devices required this fix (in 1.6 it is still required)
-		
-		if (android.os.Build.MODEL.toLowerCase().contains("galaxy"))
-		{
-			try
-			{
-				final int buildInc = Integer.parseInt(android.os.Build.VERSION.INCREMENTAL);
-				if (buildInc < 20090903)
-				{
-					requiresRtlWorkaround = "galaxy without the fix";
-				}
-				else
-				{
-					requiresRtlWorkaround = "galaxy WITH the fix";
-				}
-			}
-			catch(Exception ex)
-			{
-				requiresRtlWorkaround = "Error: "+ex.getMessage();//if it is like that, then I do not know, and rather say WORKAROUND!
-			}
+    private String getAskVersion() {
+		try {
+			PackageInfo info = getApplication().getPackageManager().getPackageInfo("com.menny.android.anysoftkeyboard", PackageManager.GET_ACTIVITIES);
+			return "ASK "+info.versionName+" ("+info.versionCode+")";
+		} catch (NameNotFoundException e) {
+			return "Failed to get ASK info: "+e.getMessage();
 		}
-		
-		return requiresRtlWorkaround;
+	}
+
+	private void setTextOfLabel(boolean bold, String text)
+    {
+    	TextView label = new TextView(this);
+		label.setText(text);
+		label.setTypeface(Typeface.DEFAULT, bold?Typeface.BOLD : Typeface.NORMAL);
+		mLayout.addView(label);
+		mReport = mReport + "\n" + text;
     }
     
 	@Override
