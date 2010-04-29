@@ -22,10 +22,10 @@ Currently, anysoftkeyboard uses NDK only for dictionary querying. See issue [htt
 Prerequisites: SDK installed.
 
 == Windows ==
-_Tested with Windows 7 RC1, 64bit. Should also work with XP (32bit) and Vista (32bit & 64bit) according to NDK web site._
+_Tested with Windows 7, 64bit. Should also work with XP (32bit) and Vista (32bit & 64bit) according to NDK web site._
 
  # Install Cygwin from [http://www.cygwin.com here]. Cygwin site has quite large [http://cygwin.com/cygwin-ug-net/setup-net.html#internet-setup documentation] on installation if you feel unsure about it. Install Cygwin to path without spaces for maximum compatibility. Later we assume that install directory is "c:\cygwin\".
- # Install "make"  package (GNU Make) by starting the Cygwin setup.exe again after installation. The make package can be found under "Devel" category, do use the search function.
+ # Install latest "make"  package (GNU Make) by starting the Cygwin setup.exe again after installation. The make package can be found under "Devel" category, do use the search function. GNU Make version 3.81 or newer should work.
  # Download NDK from [http://developer.android.com/sdk/ndk/1.6_r1/index.html here]. Choose zip file corresponding to Windows platform.
  # Unzip NDK to folder of your liking. DO *NOT* unzip it to folder with spaces. Later we assume that unzip-directory is {{{D:\apps\Android_NDK}}}. After zip extraction, the folder should contain one folder named "android-ndk-1.6_r1".
 
@@ -46,7 +46,7 @@ Assumptions: softkeyboard SVN root is in {{{d:\softkeyboard}}}. This folder shou
 
 
 == Windows ==
-_Tested with Windows 7 RC1, 64bit. Should also work with XP (32bit) and Vista (32bit & 64bit) according to NDK web site._
+_Tested with Windows 7, 64bit. Should also work with XP (32bit) and Vista (32bit & 64bit) according to NDK web site._
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/Apps/Android_NDK/android-ndk-1.6_r1}}} and press _Enter_. Note that folder names and commands are case-sensitive. You can use tab to auto-complete folder names. If you installed NDK to c drive remember to change {{{/cygdrive/d/}}} to {{{/cygdrive/c/}}}.
  # Type {{{build/host-setup.sh}}} and press _Enter_. This setups the build environment using the apps configured in one-time setup step. You should see following output:
