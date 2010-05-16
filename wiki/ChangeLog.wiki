@@ -2,12 +2,21 @@
 #labels Featured
 = Upcoming version =
 Major issues:
- * Some bug fixes
- * External packages
-
-All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=317 here]
+ * Refactoring
+ * Some bug fixing
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=366 here] 
 
 = Latest released version =
+= Build 20100516 =
+ * Landscape layout fix - sometimes on non-full-screen view, the keyboard will occupy half the screen.
+Fixed [http://code.google.com/p/softkeyboard/issues/detail?id=363 this]
+
+= Build 20100515 =
+ * Some bug fixes
+ * External packages (download your language pack too!)
+ * Changelog notification upon first startup.
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=317 here]
+
 = Build 20100328 =
  * Some layouts
  * Some bugs
