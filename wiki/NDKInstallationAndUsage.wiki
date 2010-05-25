@@ -45,7 +45,7 @@ Assumptions: softkeyboard SVN root is in {{{d:\softkeyboard}}}. This folder shou
 
  # Open C:\cygwin\Cygwin.bat and type {{{cd /cygdrive/d/softkeyboard/project}}} and press _Enter_. Note that folder names and commands are case-sensitive. You can use tab to auto-complete folder names. If you installed NDK to c drive remember to change {{{/cygdrive/d/}}} to {{{/cygdrive/c/}}}.
  # Type {{{ndk-build}}} and press _Enter_. This will build the {{{nativeime}}} component. You should see the following output if everything goes well:
-[http://softkeyboard.googlecode.com/files/ndk_usage_1.png].
+[http://softkeyboard.googlecode.com/files/ndk_usage_2.png].
 
   * If everything goes OK, {{{libnativeime.so}}} should appear in {{{<SVN_ROOT>/project/libs/armeabi}}} where {{{<SVN_ROOT>}}} stands for root of anysoftkeyboard svn ({{{d:\softkeyboard}}}).
   * If there's compilation errors, they are shown.
