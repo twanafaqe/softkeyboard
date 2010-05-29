@@ -14,7 +14,7 @@ Click "Install". Note that this application requires some permissions: this keyb
 After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Language & keyboard" (or "Locale&text" in Android 1.5).
 
 ||Android before v2||Android v2+||
-||<i src='http://softkeyboard.googlecode.com/files/settings.png' width='160px'>||<i src='howto/langAndKeyboard_fw2.png' width='160px'>||
+||<i src='http://softkeyboard.googlecode.com/files/settings.png' width='160px'/>||<i src='howto/langAndKeyboard_fw2.png' width='160px'/>||
 
 In the new screen, enable "Any Soft Keyboard".
 
