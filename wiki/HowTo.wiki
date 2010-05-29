@@ -49,12 +49,13 @@ Select "Any Soft Keyboard".
 The keyboard default layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
 ==Settings==
-*More about !AnySoftKeyboard Settings, go to [http://code.google.com/p/softkeyboard/wiki/Settings here]
 There are two ways to access !AnySoftKeyboard's settings:
  * Under Android Settings, select "Language & keyboard" (or "Locale&text" in Android 1.5), and then "Any Soft Keyboard setting":
 <img src='http://softkeyboard.googlecode.com/files/enable_anykeyboard.png' width='320px'/>
  * Long-press the on-screen ENTER key. This will bring up the actions menu:
 <img src='http://softkeyboard.googlecode.com/svn/wiki/howto/ask_context_menu.png' width='320px'/>
+
+More about !AnySoftKeyboard Settings, go to [http://code.google.com/p/softkeyboard/wiki/Settings here]
 
 ===Keyboards===
 At the bottom of Any Soft Keyboard settings page, there is a list of all supported keyboard layout. Enable the layouts you wish to use.
