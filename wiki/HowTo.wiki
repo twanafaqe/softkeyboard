@@ -14,7 +14,7 @@ Click "Install". Note that this application requires some permissions: this keyb
 After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Language & keyboard" (or "Locale&text" in Android 1.5).
 
 ||Android before v2||Android v2+||
-||<img src='http://softkeyboard.googlecode.com/files/settings.png' width='160px'/>||<img src='howto/langAndKeyboard_fw2.png' width='160px'/>||
+||<img src='http://softkeyboard.googlecode.com/files/settings.png' width='320px'/>||<img src='http://code.google.com/p/softkeyboard/wiki/howto/langAndKeyboard_fw2.png' width='320px'/>||
 
 In the new screen, enable "Any Soft Keyboard".
 
@@ -28,7 +28,7 @@ http://softkeyboard.googlecode.com/files/ime_warning.png
 You should not worry about approving this keyboard: First, this is an open source application, so anyone can check the code and see if there is something weird here.
 Second, since this application do not have permissions for network access, it is useless for it to store you key-strokes, it can not send it to nowhere :)
 
-Press OK to approve the keyboard.
+Press *OK* to approve the keyboard.
 
 In order to actually use this keyboard, you'll need to activate it.
 Go to any application with a text field (e.g., Messaging).
@@ -49,9 +49,11 @@ Select "Any Soft Keyboard".
 The keyboard default layouts are English and Hebrew, so if you want to use a different layout, you should enable it. Read below about how to set it up.
 
 ==Settings==
-Under Android Settings, select "Locale&text", and then "Any Soft Keyboard setting".
-
-http://softkeyboard.googlecode.com/files/keyboard_settings.png
+There are two ways to access !AnySoftKeyboard's settings:
+ * Under Android Settings, select "Language & keyboard" (or "Locale&text" in Android 1.5), and then "Any Soft Keyboard setting":
+<img src='http://softkeyboard.googlecode.com/files/keyboard_settings.png' width='320px'/>
+ * Long-press the on-screen ENTER key. This will bring up the actions menu:
+<img src='http://softkeyboard.googlecode.com/wiki/howto/ask_context_menu.png' width='320px'/>
 
 ===Change layout method===
 Select "Layout change method" from the list, and in the pop-up window, select the desired change method.
