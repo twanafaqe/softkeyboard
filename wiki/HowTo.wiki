@@ -11,9 +11,10 @@ Click "Install". Note that this application requires some permissions: this keyb
 
  * You can get !AnySoftKeyboard from several other sites [http://code.google.com/p/softkeyboard/wiki/HowToGetIt too]
 
-After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Locale&text".
+After Any Soft Keyboard has been downloaded and installed, go to your phone's settings, and select "Language & keyboard" (or "Locale&text" in Android 1.5).
 
-http://softkeyboard.googlecode.com/files/settings.png
+||Android before v2||Android v2+||
+||<i src='http://softkeyboard.googlecode.com/files/settings.png' width='160px'>||<i src='howto/langAndKeyboard_fw2.png' width='160px'>||
 
 In the new screen, enable "Any Soft Keyboard".
 
