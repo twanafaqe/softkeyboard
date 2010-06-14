@@ -1,4 +1,5 @@
 #summary Binary dictionary is the dictionary format in softkeyboard. This pages guides how to create them.
+#labels Phase-Implementation
 
 = Binary Dictionaries =
 Binary dictionary format is an efficient and compact way to store dictionaries. The format is defined in LatinIME input method (Android default keyboard), which is part of the open source Android platform. 
@@ -97,3 +98,21 @@ Please see [http://code.google.com/p/softkeyboard/issues/detail?id=240 Issue 240
  # Remove SQLite dictionary file {{{<project>/dict_creation/conversion/<lang>}}}.
 
 The resulting XML Dictionary can be converted to Binary dictionary
+
+= Where to get word-lists (thanks to Jacob Nordfalk) =
+A good (but not perfect - since it is not an email/sms/im kind of source) source for word-lists is Wikipedia.
+ * Download an archive of the language you want to create a word-list for from [http://en.wikipedia.org/wiki/Wikipedia_database here]
+ * Under Linux shell (this will take a long time):
+{{{
+bzcat archive.bz2 | tr '[:punct:][:blank:][:digit:]' '\012' | tr 'A-Z' 'a-z' | tr 'ÆØÅŜĴĤĜŬ' 'æøåŝĵĥĝŭ' | uniq | grep -v '^.$' | sort -f | uniq -c | sort -nr | head -50000 | tail -n +2 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > dict.xml
+}}}
+
+ * Add the XML header at the beginning of the file:
+{{{
+<?xml version="1.0" encoding="UTF-8" ?>
+<wordlist>
+}}}
+ * Add the XML footer at the end of the file:
+{{{
+</wordlist>
+}}}
