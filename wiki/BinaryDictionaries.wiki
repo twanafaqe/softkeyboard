@@ -108,7 +108,7 @@ bzcat archive.bz2 | grep -v '<[a-z]*\s' | grep -v '&[a-z0-9]*;' | tr '[:punct:][
 }}}
 Or (without accents)
 {{{
-bzcat enwikisource-20100613-pages-meta-current.xml.bz2 | grep -v '<[a-z]*\s' | grep -v '&[a-z0-9]*;' | tr '[:punct:][:blank:][:digit:]' '\n' | tr 'A-Z' 'a-z' | uniq | grep -o '^[a-z]*$' | sort -f | uniq -c | sort -nr | head -50000 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > en.xml
+bzcat archive.bz2 | grep -v '<[a-z]*\s' | grep -v '&[a-z0-9]*;' | tr '[:punct:][:blank:][:digit:]' '\n' | tr 'A-Z' 'a-z' | uniq | grep -o '^[a-z]*$' | sort -f | uniq -c | sort -nr | head -50000 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > en.xml
 }}}
 
  * Add the XML header at the beginning of the file:
