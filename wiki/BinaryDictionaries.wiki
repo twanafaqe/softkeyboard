@@ -104,7 +104,11 @@ A good (but not perfect - since it is not an email/sms/im kind of source) source
  * Download an archive of the language you want to create a word-list for from [http://en.wikipedia.org/wiki/Wikipedia_database here]
  * Under Linux shell (this will take a long time):
 {{{
-bzcat archive.bz2 | tr '[:punct:][:blank:][:digit:]' '\012' | tr 'A-Z' 'a-z' | tr 'ÆØÅŜĴĤĜŬ' 'æøåŝĵĥĝŭ' | uniq | grep -v '^.$' | sort -f | uniq -c | sort -nr | head -50000 | tail -n +2 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > dict.xml
+bzcat archive.bz2 | grep -v '<[a-z]*\s' | grep -v '&[a-z0-9]*;' | tr '[:punct:][:blank:][:digit:]' '\n' | tr 'A-Z' 'a-z' | tr 'ÆØÅŜĴĤĜŬ' 'æøåŝĵĥĝŭ' | uniq | sort -f | uniq -c | sort -nr | head -50000 | tail -n +2 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > dict.xml
+}}}
+Or (without accents)
+{{{
+bzcat enwikisource-20100613-pages-meta-current.xml.bz2 | grep -v '<[a-z]*\s' | grep -v '&[a-z0-9]*;' | tr '[:punct:][:blank:][:digit:]' '\n' | tr 'A-Z' 'a-z' | uniq | grep -o '^[a-z]*$' | sort -f | uniq -c | sort -nr | head -50000 | awk '{print "<w f=\""$1"\">"$2"</w>"}'  > en.xml
 }}}
 
  * Add the XML header at the beginning of the file:
