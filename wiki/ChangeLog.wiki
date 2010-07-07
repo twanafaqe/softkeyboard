@@ -3,7 +3,11 @@
 = Upcoming version =
 Major issues:
  * Refactoring
- * Some bug fixing
+ * Small screens (2.2") support
+ * Revised icons.
+ * Some bug fixing:
+  * Better BiDi support
+  * Better English dictionary
 All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=366 here] 
 
 = Latest released version =
