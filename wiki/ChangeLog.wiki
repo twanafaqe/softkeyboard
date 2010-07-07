@@ -8,6 +8,7 @@ Major issues:
  * Some bug fixing:
   * Better !BiDi support
   * Better English dictionary
+  * And many more.
 All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=366 here] 
 
 = Latest released version =
