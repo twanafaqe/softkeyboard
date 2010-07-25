@@ -23,7 +23,7 @@
 	    </activity>
 	    <activity android:name=".tutorials.TutorialActivity" android:label="Tutorial">
 	    </activity>
-
+<!--
 	    <activity android:name=".MainForm"
                   android:label="@string/ime_name">
             <intent-filter>
@@ -31,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+-->        
 	</application>
 
 	<uses-permission android:name="android.permission.VIBRATE" />
