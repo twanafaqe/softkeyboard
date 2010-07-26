@@ -7,9 +7,6 @@ import android.view.inputmethod.EditorInfo;
 
 public class Workarounds 
 {
-	//Determine whether this device has the fix for RTL in the suggestions list
-	private static final boolean ms_requiresRtlWorkaround;
-	
 	private static final boolean ms_isDonut;
 	private static final boolean ms_isEclair;
 
@@ -17,38 +14,38 @@ public class Workarounds
 	
 	static
 	{
-		boolean requiresRtlWorkaround = true;//all devices required this fix (in 2.1 it is still required)
-		
-		if (!android.os.Build.USER.toLowerCase().contains("root"))//there is no rooted ROM with a fix.
-		{
-			if (android.os.Build.MODEL.toLowerCase().contains("galaxy"))
-			{
-				//see issue 132
-				//and issue 285
-				//no fix: 1251851795000
-				//fix: 1251970876000
-				//no fix: 1251851795000
-				//fix: 1251970876000
-				//fix: 1261367883000
-	//			//final int buildInc = Integer.parseInt(android.os.Build.VERSION.INCREMENTAL);
-	//			//requiresRtlWorkaround = (buildInc < 20090831);
-				requiresRtlWorkaround =  (android.os.Build.TIME <= 1251851795000l);
-			}
-			else if (android.os.Build.DEVICE.toLowerCase().contains("spica"))
-			{
-				//(see issue 285):
-				//fixed: 1263807011000
-				requiresRtlWorkaround =  (android.os.Build.TIME < 1263807011000l);//this is a lower "L" at the end
-			}
-			else if (android.os.Build.USER.contains("shade"))
-			{
-				//cyanogen has patched drawText and StaticLayout to support BiDi (thanks to kohen.d patch)
-				//since 5.0.8
-				requiresRtlWorkaround = (android.os.Build.TIME < 1276940912000l);
-			}
-		}
-		
-		ms_requiresRtlWorkaround = requiresRtlWorkaround;
+//		boolean requiresRtlWorkaround = true;//all devices required this fix (in 2.1 it is still required)
+//		
+//		if (!android.os.Build.USER.toLowerCase().contains("root"))//there is no rooted ROM with a fix.
+//		{
+//			if (android.os.Build.MODEL.toLowerCase().contains("galaxy"))
+//			{
+//				//see issue 132
+//				//and issue 285
+//				//no fix: 1251851795000
+//				//fix: 1251970876000
+//				//no fix: 1251851795000
+//				//fix: 1251970876000
+//				//fix: 1261367883000
+//	//			//final int buildInc = Integer.parseInt(android.os.Build.VERSION.INCREMENTAL);
+//	//			//requiresRtlWorkaround = (buildInc < 20090831);
+//				requiresRtlWorkaround =  (android.os.Build.TIME <= 1251851795000l);
+//			}
+//			else if (android.os.Build.DEVICE.toLowerCase().contains("spica"))
+//			{
+//				//(see issue 285):
+//				//fixed: 1263807011000
+//				requiresRtlWorkaround =  (android.os.Build.TIME < 1263807011000l);//this is a lower "L" at the end
+//			}
+//			else if (android.os.Build.USER.contains("shade"))
+//			{
+//				//cyanogen has patched drawText and StaticLayout to support BiDi (thanks to kohen.d patch)
+//				//since 5.0.8
+//				requiresRtlWorkaround = (android.os.Build.TIME < 1276940912000l);
+//			}
+//		}
+//		
+//		ms_requiresRtlWorkaround = requiresRtlWorkaround;
 		//checking f/w API is a bit tricky, we need to do it by reflection
 		boolean isDonut = false;
 		boolean isEclair = false;
@@ -86,58 +83,58 @@ public class Workarounds
 		}
 	}
 	
-	public static int workaroundParenthesisDirectionFix(int primaryCode)
-	{
-		//Android does not support the correct direction of parenthesis in right-to-left langs.
-		if (!getRtlWorkaround())
-			return primaryCode;//I hope Galaxy has the fix...
-		
-		if (primaryCode == (int)')')
-			return '(';
-		else if (primaryCode == (int)'(')
-			return ')';
-		
-		return primaryCode;
-	}
-	
-	public static CharSequence workaroundCorrectStringDirection(CharSequence suggestion) 
-    {
-		//Hebrew letters are to be drawn in the other direction.
-    	//Also, this is not valid for Galaxy (Israel's Cellcom Android)
-    	if (!getRtlWorkaround())
-			return suggestion;
-		
-    	//this function is a workaround! In the official 1.5 firmware, there is a RTL bug.
-    	if (isRightToLeftCharacter(suggestion.charAt(0)))
-    	{
-    		String reveresed = "";
-			for(int charIndex = suggestion.length() - 1; charIndex>=0; charIndex--)
-			{
-				reveresed = reveresed + suggestion.charAt(charIndex);
-			}
-			return reveresed;
-    	}
-    	else
-    		return suggestion;
-	}
+//	public static int workaroundParenthesisDirectionFix(int primaryCode)
+//	{
+//		//Android does not support the correct direction of parenthesis in right-to-left langs.
+//		if (!getRtlWorkaround())
+//			return primaryCode;//I hope Galaxy has the fix...
+//		
+//		if (primaryCode == (int)')')
+//			return '(';
+//		else if (primaryCode == (int)'(')
+//			return ')';
+//		
+//		return primaryCode;
+//	}
+//	
+//	public static CharSequence workaroundCorrectStringDirection(CharSequence suggestion) 
+//    {
+//		//Hebrew letters are to be drawn in the other direction.
+//    	//Also, this is not valid for Galaxy (Israel's Cellcom Android)
+//    	if (!getRtlWorkaround())
+//			return suggestion;
+//		
+//    	//this function is a workaround! In the official 1.5 firmware, there is a RTL bug.
+//    	if (isRightToLeftCharacter(suggestion.charAt(0)))
+//    	{
+//    		String reveresed = "";
+//			for(int charIndex = suggestion.length() - 1; charIndex>=0; charIndex--)
+//			{
+//				reveresed = reveresed + suggestion.charAt(charIndex);
+//			}
+//			return reveresed;
+//    	}
+//    	else
+//    		return suggestion;
+//	}
 
-	private static boolean getRtlWorkaround() {
-		String configRtlWorkaround = AnySoftKeyboardConfiguration.getInstance().getRtlWorkaroundConfiguration();
-		if (configRtlWorkaround.equals("auto"))
-			return ms_requiresRtlWorkaround;
-		else if (configRtlWorkaround.equals("workaround"))
-			return true;
-		else 
-			return false;			
-	}
+//	private static boolean getRtlWorkaround() {
+//		String configRtlWorkaround = AnySoftKeyboardConfiguration.getInstance().getRtlWorkaroundConfiguration();
+//		if (configRtlWorkaround.equals("auto"))
+//			return ms_requiresRtlWorkaround;
+//		else if (configRtlWorkaround.equals("workaround"))
+//			return true;
+//		else 
+//			return false;			
+//	}
 	
-	public static boolean isAltSpaceLangSwitchNotPossible(){
-		String model = android.os.Build.MODEL.toLowerCase();
-		if(model.equals("milestone") || model.equals("droid")){
-			return true;
-		}
-		return false;
-	}
+//	public static boolean isAltSpaceLangSwitchNotPossible(){
+//		String model = android.os.Build.MODEL.toLowerCase();
+//		if(model.equals("milestone") || model.equals("droid")){
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public static boolean isDonut() {
 		return ms_isDonut;

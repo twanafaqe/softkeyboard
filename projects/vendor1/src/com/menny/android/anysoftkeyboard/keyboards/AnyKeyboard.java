@@ -23,8 +23,6 @@ import com.menny.android.anysoftkeyboard.Workarounds;
 
 public abstract class AnyKeyboard extends Keyboard 
 {
-	//public static final String POPUP_FOR_QUESTION = "!/@\u0026\u00bf\u00a1";
-	//public static final String POPUP_FOR_AT = "!/?\u0026\u00bf\u00a1";
 	private final static String TAG = "ASK - AK";
 	
 	public final static int KEYCODE_LANG_CHANGE = -99;
@@ -469,8 +467,8 @@ public abstract class AnyKeyboard extends Keyboard
         
         setPopupKeyChars(key);
         
-        if (!TextUtils.isEmpty(key.label))
-        	key.label = Workarounds.workaroundCorrectStringDirection(key.label);
+//        if (!TextUtils.isEmpty(key.label))
+//        	key.label = Workarounds.workaroundCorrectStringDirection(key.label);
         		
         return key;
     }
@@ -569,19 +567,19 @@ public abstract class AnyKeyboard extends Keyboard
 	                mEnterKey.iconPreview = null;
 	                mEnterKey.icon = null;
 	                //there is a problem with LTR languages
-	                mEnterKey.label = Workarounds.workaroundCorrectStringDirection(res.getText(R.string.label_go_key));
+	                mEnterKey.label = res.getText(R.string.label_go_key);
 	                break;
 	            case EditorInfo.IME_ACTION_NEXT:
 	                mEnterKey.iconPreview = null;
 	                mEnterKey.icon = null;
 	              //there is a problem with LTR languages
-	                mEnterKey.label = Workarounds.workaroundCorrectStringDirection(res.getText(R.string.label_next_key));
+	                mEnterKey.label = res.getText(R.string.label_next_key);
 	                break;
 	            case EditorInfo.IME_ACTION_DONE:
 	            	mEnterKey.iconPreview = null;
 	                mEnterKey.icon = null;
 	                //there is a problem with LTR languages
-	                mEnterKey.label = Workarounds.workaroundCorrectStringDirection(res.getText(R.string.label_done_key));
+	                mEnterKey.label =res.getText(R.string.label_done_key);
 	                break;
 	            case EditorInfo.IME_ACTION_SEARCH:
 	            	setKeyIcons(mEnterKey, res, R.drawable.sym_keyboard_search, R.drawable.sym_keyboard_feedback_search);
@@ -590,7 +588,7 @@ public abstract class AnyKeyboard extends Keyboard
 	            	mEnterKey.iconPreview = null;
 		            mEnterKey.icon = null;
 		            //there is a problem with LTR languages
-		            mEnterKey.label = Workarounds.workaroundCorrectStringDirection(res.getText(R.string.label_send_key));
+		            mEnterKey.label = res.getText(R.string.label_send_key);
 	            	break;
 	            case EditorInfo.IME_ACTION_NONE:
 	            case EditorInfo.IME_ACTION_UNSPECIFIED:

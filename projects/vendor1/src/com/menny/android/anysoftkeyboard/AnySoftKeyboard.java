@@ -173,10 +173,10 @@ public class AnySoftKeyboard extends InputMethodService implements
 
 	private boolean mSpaceSent;
 
-	private static final int LAST_CHAR_SHIFT_STATE_UNKNOWN = 0;
-	private static final int LAST_CHAR_SHIFT_STATE_UNSHIFTED = 1;
-	private static final int LAST_CHAR_SHIFT_STATE_SHIFTED = 2;
-	private int mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
+//	private static final int LAST_CHAR_SHIFT_STATE_UNKNOWN = 0;
+//	private static final int LAST_CHAR_SHIFT_STATE_UNSHIFTED = 1;
+//	private static final int LAST_CHAR_SHIFT_STATE_SHIFTED = 2;
+//	private int mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
 
 	public static AnySoftKeyboard getInstance() {
 		return INSTANCE;
@@ -649,7 +649,7 @@ public class AnySoftKeyboard extends InputMethodService implements
 		// return false;
 		case KeyEvent.KEYCODE_SHIFT_LEFT:
         case KeyEvent.KEYCODE_SHIFT_RIGHT:
-            if (event.isAltPressed() && Workarounds.isAltSpaceLangSwitchNotPossible()) {
+            if (event.isAltPressed()/* && Workarounds.isAltSpaceLangSwitchNotPossible()*/) {
                 Log.d(TAG,
                                 "User pressed ALT+SHIFT on motorola milestone, moving to next physical keyboard.");
                 // consuming the meta keys
@@ -679,7 +679,7 @@ public class AnySoftKeyboard extends InputMethodService implements
 						getMetaKeysStates("onKeyDown after handle"));
 			break;
 		case KeyEvent.KEYCODE_SPACE:
-			if (event.isAltPressed() && !Workarounds.isAltSpaceLangSwitchNotPossible()) {
+			if (event.isAltPressed()/* && !Workarounds.isAltSpaceLangSwitchNotPossible()*/) {
 				Log.d(TAG,
 								"User pressed ALT+SPACE, moving to next physical keyboard.");
 				// consuming the meta keys
@@ -720,11 +720,7 @@ public class AnySoftKeyboard extends InputMethodService implements
 				if (ic != null)
 					ic.beginBatchEdit();
 				try {
-				    //issue 393, backword on the hw keyboard!
-				    if(AnySoftKeyboardConfiguration.getInstance().useBackword() && keyCode == KeyEvent.KEYCODE_DEL && event.isShiftPressed()){
-                        handleBackword(ic);
-                        return true;
-				    } else if (event.isPrintingKey()) {
+				    if (event.isPrintingKey()) {
 						mHardKeyboardAction.initializeAction(event, mMetaState);
 						// http://article.gmane.org/gmane.comp.handhelds.openmoko.android-freerunner/629
 						AnyKeyboard current = mKeyboardSwitcher.getCurrentKeyboard();
@@ -1080,11 +1076,12 @@ public class AnySoftKeyboard extends InputMethodService implements
             break;
 		default:
 			primaryCode = translatePrimaryCodeFromCurrentKeyboard(primaryCode);
+/*			
 			// Issue 146: Right to left langs require reversed parenthesis
 			if (mKeyboardSwitcher.isRightToLeftMode())
 				primaryCode = Workarounds
 						.workaroundParenthesisDirectionFix(primaryCode);
-
+*/
 			if (isWordSeparator(primaryCode)) {
 				handleSeparator(primaryCode);
 			} else {
@@ -1172,105 +1169,13 @@ public class AnySoftKeyboard extends InputMethodService implements
 		return c == 32 || PUNCTUATION_CHARACTERS.contains(c);
 	}
 
-	private  void handleBackword(InputConnection ic) {
-	    try{
-	    if(ic == null){
-	        return;
-	    }
-		if (mPredicting) {
-			final int length = mComposing.length();
-			if (length == 0) {
-				return;
-			}
-			mComposing.delete(0, length);
-			mWord.deleteLast();
-			ic.setComposingText(mComposing, 1);
-			if (mComposing.length() == 0) {
-				mPredicting = false;
-			}
-			postUpdateSuggestions();
-			return;
-		}
-		CharSequence cs = ic.getTextBeforeCursor(1, 0);
-		int csl = cs.length();//check if there is no input
-		if (csl == 0) {
-			return;//nothing to delete
-		}
-		//TWO OPTIONS
-		//1) Either we do like Linux and Windows (and probably ALL desktop OSes):
-		//Delete all the characters till a complete word was deleted:
-		/*
-		 * What to do:
-		 * We delete until we find a separator (the function isBackwordStopChar).
-		 * Note that we MUST delete a delete a whole word! So if the backword starts
-		 * at separators, we'll delete those, and then the word before:
-		 * "test this,       ," -> "test "
-		 */
-		//Pro: same as desktop
-		//Con: when auto-caps is on (the default), this will delete the previous word, which can be annoying..
-		//E.g., Writing a sentence, then a period, then ASK will auto-caps, then when the user press backspace (for some reason),
-		//the entire previous word deletes.
-		
-		//2) Or we delete all the characters till we encounter a separator, but delete at least one character.
-		/*
-		 * What to do:
-		 * We delete until we find a separator (the function isBackwordStopChar).
-		 * Note that we MUST delete a delete at least one character
-		 * "test this, " -> "test this," -> "test this" -> "test "
-		 */
-		//Pro: Supports auto-caps, and mostly similar to desktop OSes
-		//Con: Not all desktop use-cases are here.
-		
-		//For now, I go with option 2, but I'm open for discussion.
-		
-		//2b) "test this, " -> "test this"
-		
-		boolean stopCharAtTheEnd = isBackwordStopChar((int)cs.charAt(0)); 
-		int idx = 1;
-		while (true) {
-			cs = ic.getTextBeforeCursor(idx, 0);
-			csl = cs.length();
-			if (csl < idx) {
-				// read text is smaller than requested. We are at start
-				break;
-			}
-			++idx;
-			int cc = cs.charAt(0);
-			boolean isBackwordStopChar = isBackwordStopChar(cc);
-			if (stopCharAtTheEnd) {
-				if (!isBackwordStopChar){
-					--csl;
-					break;
-				} 
-				continue;
-			}
-			if (isBackwordStopChar) {
-				--csl;
-				break;
-			}
-		}
-		//we want to delete at least one character
-		//ic.deleteSurroundingText(csl == 0 ? 1 : csl, 0);
-		ic.deleteSurroundingText(csl, 0);//it is always > 0 !
-		
-	    }finally{
-	        handleShiftStateAfterBackspace();
-	    }
-	}
 	
-
 	private void handleBackspace() {
 		InputConnection ic = getCurrentInputConnection();	
 		if (ic == null)//if we don't want to do anything, lets check null first.
             return;
 		
-		if (AnySoftKeyboardConfiguration.getInstance().useBackword() && mInputView != null && mInputView.isShifted())
-		{
-			handleBackword(ic);
-			return;
-		}
-		
-	    boolean deleteChar = false;
+		boolean deleteChar = false;
 		if (mPredicting) {
 			final int length = mComposing.length();
 			if (length > 0) {
@@ -1288,7 +1193,7 @@ public class AnySoftKeyboard extends InputMethodService implements
 			deleteChar = true;
 		}
 		
-		handleShiftStateAfterBackspace();
+		//handleShiftStateAfterBackspace();
 		
 		TextEntryState.backspace();
 		if (TextEntryState.getState() == TextEntryState.STATE_UNDO_COMMIT) {
@@ -1310,7 +1215,7 @@ public class AnySoftKeyboard extends InputMethodService implements
 			
 				Log.v(TAG, "Delete did not happen. We'll wait some more for it.");
 				try {
-					Thread.sleep(25);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1328,37 +1233,33 @@ public class AnySoftKeyboard extends InputMethodService implements
 		super.sendDownUpKeyEvents(keyEventCode);
 		//since it happens in a different process (asynch)
 		//we'll let the system settle.
-		try {
-			Thread.sleep(10);//this is not a fix, but a bit relaxing..
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		Thread.yield();//this is not a fix, but a bit relaxing..
 	}
 
-	private void handleShiftStateAfterBackspace() {
-		switch(mLastCharacterShiftState)
-		{
-			//this code will help use in the case that
-			//a double/triple tap occur while first one was shifted
-		case LAST_CHAR_SHIFT_STATE_SHIFTED:
-			if (mInputView != null)
-				mInputView.setShifted(true);
-			mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
-			break;
-		case LAST_CHAR_SHIFT_STATE_UNSHIFTED:
-			if (mInputView != null)
-				mInputView.setShifted(false);
-			mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
-			break;
-		default:
-			updateShiftKeyState(getCurrentInputEditorInfo());
-			break;
-		}
-		if(mInputView != null){
-		    mInputView.requestShiftKeyRedraw();
-		}
-	}
+//	private void handleShiftStateAfterBackspace() {
+//		switch(mLastCharacterShiftState)
+//		{
+//			//this code will help use in the case that
+//			//a double/triple tap occur while first one was shifted
+//		case LAST_CHAR_SHIFT_STATE_SHIFTED:
+//			if (mInputView != null)
+//				mInputView.setShifted(true);
+//			mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
+//			break;
+//		case LAST_CHAR_SHIFT_STATE_UNSHIFTED:
+//			if (mInputView != null)
+//				mInputView.setShifted(false);
+//			mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
+//			break;
+//		default:
+//			updateShiftKeyState(getCurrentInputEditorInfo());
+//			break;
+//		}
+//		if(mInputView != null){
+//		    mInputView.requestShiftKeyRedraw();
+//		}
+//	}
 
 	private void handleShift() {
 		if (mKeyboardSwitcher.isAlphabetMode()) {
@@ -1408,9 +1309,6 @@ public class AnySoftKeyboard extends InputMethodService implements
 				mWord.reset();
 			}
 		}
-		if(mInputView != null){
-		    mLastCharacterShiftState = mInputView.isShifted()? LAST_CHAR_SHIFT_STATE_SHIFTED : LAST_CHAR_SHIFT_STATE_UNSHIFTED;
-		}
 		
 		if (mPredicting) {
 			if ((mInputView != null) && mInputView.isShifted()
@@ -1419,13 +1317,21 @@ public class AnySoftKeyboard extends InputMethodService implements
 			}
 
 			mComposing.append((char) primaryCode);
-			if(keyCodes != null && keyCodes.length > 1){
-			    if(primaryCode != keyCodes[0]){
-			    int[] tmp = new int[keyCodes.length+1];
-			    tmp[0] = primaryCode;
-			    System.arraycopy(keyCodes, 0, tmp, 1, keyCodes.length);
-			    keyCodes = tmp;
-			   }
+			if(keyCodes != null && keyCodes.length > 1 && primaryCode != keyCodes[0]){
+				int swapedItem = keyCodes[0];
+				keyCodes[0] = primaryCode;
+				for(int i=1;i<keyCodes.length; i++)
+				{
+					if (keyCodes[i] == primaryCode)
+					{
+						keyCodes[i] = swapedItem;
+						break;
+					}
+				}
+//				int[] tmp = new int[keyCodes.length+1];
+//			    tmp[0] = primaryCode;
+//			    System.arraycopy(keyCodes, 0, tmp, 1, keyCodes.length);
+//			    keyCodes = tmp;
 			}
 			mWord.add(primaryCode, keyCodes);
 			InputConnection ic = getCurrentInputConnection();
@@ -1770,7 +1676,6 @@ public class AnySoftKeyboard extends InputMethodService implements
 		Log.i("AnySoftKeyboard", "nextKeyboard: Setting next keyboard to: "
 				+ currentKeyboard.getKeyboardName());
 		updateShiftKeyState(currentEditorInfo);
-		mLastCharacterShiftState = LAST_CHAR_SHIFT_STATE_UNKNOWN;
 		// changing dictionary
 		setMainDictionaryForCurrentKeyboard();
 		// Notifying if needed
