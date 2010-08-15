@@ -1,7 +1,16 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
-Major issues:
+Not decided yet.
+
+= Latest released version =
+= 20100815 =
+ * Crashes on Sony Ericsson X10.
+ * All symbols keyboards are cycled.
+ * Backspace in Terminal fixed.
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=493 here] 
+
+= 20100805 =
  * Refactoring
  * Small screens (2.2") support
  * Revised icons.
@@ -12,7 +21,6 @@ Major issues:
   * And many more.
 All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=366 here] 
 
-= Latest released version =
 = Build 20100516 =
  * Landscape layout fix - sometimes on non-full-screen view, the keyboard will occupy half the screen.
 Fixed [http://code.google.com/p/softkeyboard/issues/detail?id=363 this]
