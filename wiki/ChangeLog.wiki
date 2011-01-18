@@ -3,6 +3,7 @@
 = Upcoming version =
 Not decided yet.
  * Crashes related to Android 1.5
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=616&start=100 here]
 
 = Latest released version =
 = 20110115 =
