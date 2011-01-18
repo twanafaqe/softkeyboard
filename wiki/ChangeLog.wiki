@@ -2,8 +2,18 @@
 #labels Featured
 = Upcoming version =
 Not decided yet.
+ * Crashes related to Android 1.5
 
 = Latest released version =
+= 20110115 =
+ * Crashes related to disposal of Contacts dictionary.
+
+= 20110114 =
+ * Special dictionaries (contacts, auto).
+ * Arrows in keyboard.
+ * New icon
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=516 here]
+
 = 20100815 =
  * Crashes on Sony Ericsson X10.
  * All symbols keyboards are cycled.
