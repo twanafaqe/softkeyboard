@@ -1,11 +1,16 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
-Not decided yet.
- * Crashes related to Android 1.5
-All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=616&start=100 here]
+ * Comma in the numbers layouts.
+ * A new physical sequence handler.
+ * New gestures options.
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=636 here]
 
 = Latest released version =
+= 20110120 =
+ * Crashes related to Android 1.5.
+All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=616&start=100 here]
+
 = 20110115 =
  * Crashes related to disposal of Contacts dictionary.
 
