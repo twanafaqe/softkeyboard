@@ -15,13 +15,13 @@
   # Install svn and checkout the code: svn checkout http://softkeyboard.googlecode.com/svn/trunk/ softkeyboard-read-only. Alternatively, you can use a SVN gui like TortoiseSVN or use one provided an eclipse plugin. At the time I'm writing this doc it's r1641. Menny told me you can also use one of the latest tag (which corresponds to market versions)
   # In eclipse import the following projects from what you've just checkouted:
     * the one under the project directory
-    * the one under AnySoftKeyboardAPI
-Project called AnySoftKeyboard-trunk should compile with no errors
+    * the one under !AnySoftKeyboardAPI
+Project called !AnySoftKeyboard-trunk should compile with no errors
 I have an error in !AnySoftKeyboardAPI but it's working anyhow
 
 =How to create APK and test it on 2.2, 2.3, or 2.3.3=
-  # Right Click on AnySoftKeyboard-trunk then Android Tools/Export signed application package export signed APK 
-  # Project should be AnySoftKeyboard-trunk, Next, Choose to create a new keystore
+  # Right Click on !AnySoftKeyboard-trunk then Android Tools/Export signed application package export signed APK 
+  # Project should be !AnySoftKeyboard-trunk, Next, Choose to create a new keystore
   # Choose a file name, you have an apk that should run on 2.2, 2.3, and 2.3.3 android (that may run on other flavours, I haven't tested yet)
   # Create an AVD with an android flavour
   # Launch emulator with your favourite android flavour
@@ -30,8 +30,8 @@ I have an error in !AnySoftKeyboardAPI but it's working anyhow
 
 =How to bundle Anysoft keyboard + english and lao keyboards in a single APK=
   # duplicate the 'project' directory to 'project_sabai'
-  # delete AnySoftKeyboard-trunk in eclipse (strike suppr) but do not delete files on disk!
-  # import the project under 'project_sabai'. AnySoftKeyboard-trunk is back in workspace :)
+  # delete !AnySoftKeyboard-trunk in eclipse (strike suppr) but do not delete files on disk!
+  # import the project under 'project_sabai'. !AnySoftKeyboard-trunk is back in workspace :)
   # import lao language pack under LanguagePacks/Lao
   # you have a new !AnySoftKeyboardLanguagePackLao with 1 error (Conversion to Dalvik format failed with error 1) but it's working anyhow.
   # Merge !AnySoftKeyboardLanguagePackLao strings.xml file in AnySoftKeyboard-trunk strings.xml file
