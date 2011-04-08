@@ -32,12 +32,12 @@ I have an error in !AnySoftKeyboardAPI but it's working anyhow
   # duplicate the 'project' directory to 'project_sabai'
   # delete !AnySoftKeyboard-trunk in eclipse (strike suppr) but do not delete files on disk!
   # import the project under 'project_sabai'. !AnySoftKeyboard-trunk is back in workspace :)
-  # import lao language pack under LanguagePacks/Lao
+  # import lao language pack under !LanguagePacks/Lao
   # you have a new !AnySoftKeyboardLanguagePackLao with 1 error (Conversion to Dalvik format failed with error 1) but it's working anyhow.
-  # Merge !AnySoftKeyboardLanguagePackLao strings.xml file in AnySoftKeyboard-trunk strings.xml file
-  # Merge !AnySoftKeyboardLanguagePackLao keyboards.xml file in AnySoftKeyboard-trunk keyboards.xml file (you can choose order of keyboards with index attribute). I also removed 
-  # Copy !AnySoftKeyboardLanguagePackLao  res/drawable images in AnySoftKeyboard-trunk res/drawable directory
-  # Copy !AnySoftKeyboardLanguagePackLao lao_qwerty.xml file in AnySoftKeyboard-trunk res/xml directory
+  # Merge !AnySoftKeyboardLanguagePackLao strings.xml file in !AnySoftKeyboard-trunk strings.xml file
+  # Merge !AnySoftKeyboardLanguagePackLao keyboards.xml file in !AnySoftKeyboard-trunk keyboards.xml file (you can choose order of keyboards with index attribute). I also removed 
+  # Copy !AnySoftKeyboardLanguagePackLao  res/drawable images in !AnySoftKeyboard-trunk res/drawable directory
+  # Copy !AnySoftKeyboardLanguagePackLao lao_qwerty.xml file in !AnySoftKeyboard-trunk res/xml directory
   # Build a new apk. You're done :)
 
 Note: To install fonts on emulator you need to follow this doc: http://code.google.com/p/softkeyboard/wiki/InstallFonts and launch manually emulator with this option "-partition-size 128".
