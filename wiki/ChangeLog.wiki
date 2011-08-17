@@ -25,7 +25,8 @@ All requirements can be seen [http://s.evendanan.net/ask_r45 here]
  * Gingerbread look and feel!!!
  * Extension keyboard (swipe your finger up all the way out of the keyboard).
  * Multitouch support in supporting devices and OSes (Android 2.1+)
- * Smiley list now support icons.\n* Backup-Agent support (Android 2.2+).
+ * Smiley list now support icons.
+ * Backup-Agent support (Android 2.2+).
  * Better handling of external packs.
  * Bug fixes.
 All requirements can be seen [http://s.evendanan.net/ask_r39 here]
