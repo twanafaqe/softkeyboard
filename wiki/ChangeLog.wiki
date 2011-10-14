@@ -100,38 +100,37 @@ All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detai
  * New icons
 All requirements can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=190 here]
 
-== Build 20091122 ==
+= Build 20091122 =
  * Colemak, Ukrainian layouts - both were done by external programmers :)
  * Performance fixes
  * Localization
  * Bug fixes
 All changes can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=161 here]
 
-= Previous versions =
-== Build 20091004 ==
+= Build 20091004 =
  * Belorussian, Portuguese layouts - both were done by external programmers :)
  * Performance fixes
  * Localization
  * Bug fixes
-== Build 20090919 ==
+= Build 20090919 =
  * Arabic layout
  * Additional localizations
  * Additional dictionaries
-== Build 20090907 ==
+= Build 20090907 =
  * Another Russian layout
  * French, German, Spanish, Swedish, Russian dictionaries
  * Some bug fixes.
-== Build 20090827 ==
+= Build 20090827 =
  * Performance gain.
  * Better dictionaries for Hebrew and English
  * Some bug fixes.
  * Samsung Galaxy RTL support.
-== Build 20090817 ==
+= Build 20090817 =
  * Suggestions!
   * User dictionary
   * main dictionary in Hebrew and English.
  * Many other bug fixes.
-== Build 20090726 (note: different build semantics) ==
+= Build 20090726 (note: different build semantics) =
  * New layout - the DEL key has been moved, new Smiley key.
  * Internet keyboard has been removed, it has been integrated with the regular keyboard (when URL/EMAIL text-box has been activated).
  * Less memory consumption.
@@ -139,37 +138,37 @@ All changes can be seen [http://code.google.com/p/softkeyboard/issues/detail?id=
  * Bug fix: Symbols layouts will loop on repeated swipe and SHIFT clicks.
  * Bug fix: Accents are working in shift now...
  * First version to be tested by external testers (thanks Itamar Ben-Haim, Alexander Jordanov, Avraham Makovetsky, Dmitry Briskin, Andrej Živec)
-== Build 20072009 ==
+= Build 20072009 =
  * New languages: Russian (phonetic) and Spanish.
  * Modifications in the layouts
  * Some bug fixes.
-== Build 13072009 ==
+= Build 13072009 =
  * New Latin layouts: DVORAK and AZERTY.
  * New languages: Catalan, Bulgarian, Swiss and Swedish.
  * Key variations (by long press)
-== Build 19062009 ==
+= Build 19062009 =
  * *First version to go into the Android Market.*
  * issue 23: Sometimes sound effects do not work. Note: FX are enabled when the phone is not muted, and the volume is controlled by the Notifications volume.
  * issue 10: Lao keyboard is supported.
-== Build 16062009 ==
+= Build 16062009 =
  * Fixing ALT and SHIFT stickiness in Hebrew (ALT+TAV or SHIFT+TAV).
  * It is possible to disable Swipe.
-== Build 13062009 ==
+= Build 13062009 =
  * Fixing TAV letter in the physical keyboard - not it is possible to type question mark and comma (shift for question mark, ALT for comma)
-== Build 10062009 ==
+= Build 10062009 =
  * Fixing disappearing characters (issue 3)
-== Build 05062009 ==
+= Build 05062009 =
  * A small change in the Hebrew keyboard layout (TZADIK SOFIT).
  * Extensive change in keyboards infrastructure - now it is easier to add more languages. Any suggestions?
-== Build 03062009 ==
+= Build 03062009 =
  * Application icon
  * bug fix - question mark did not work well in the soft keyboard.
-== Build 29052009-2 ==
+= Build 29052009-2 =
  * Swipe to change keyboard layouts - swipe right to change language, swipe left to change to symbols
  * New keyboard layouts
-== Build 29052009 ==
+= Build 29052009 =
  * Bug fix - no more force close on physical keyboard usages
-== Build 0 ==
+= Build 0 =
  * All kinds of keyboards:
   * supporting English, Hebrew and Lao keyboards.
   * special keyboard for text fields which require only numbers.
