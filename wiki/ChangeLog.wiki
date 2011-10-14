@@ -1,9 +1,23 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
-All requirements can be seen [http://s.evendanan.net/ask_r49 here]
+All requirements can be seen [http://s.evendanan.net/ask_r53 here]
 
 = Latest released version =
+= 20111010 =
+ * Theme support.
+ * Top/Bottom generic row changing support.
+ * Some UI changes.
+ * New translations (CA, DE, FI, HE).
+ * Bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r51 here]
+
+= 20110907 =
+ * UI fixes for tablets.
+ * x86 support.
+ * Bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r49 here]
+
 = 20110815 =
  * Better swipe detection.
  * Infrastructure changes.
