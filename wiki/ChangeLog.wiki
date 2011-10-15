@@ -1,9 +1,14 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
-All requirements can be seen [http://s.evendanan.net/ask_r53 here]
+All requirements can be seen [http://s.evendanan.net/ask_r55 here]
 
 = Latest released version =
+= 20111015 =
+ * Nicer selected layout notification icon (status icon)
+ * Bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r53 here]
+
 = 20111010 =
  * Theme support.
  * Top/Bottom generic row changing support.
