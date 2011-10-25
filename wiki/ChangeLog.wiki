@@ -1,9 +1,16 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
-All requirements can be seen [http://s.evendanan.net/ask_r55 here]
+All requirements can be seen [http://s.evendanan.net/ask_r57 here]
 
 = Latest released version =
+= 20111024 =
+ * Shift erratic behavior fix.
+ * User dictionay saving issue fixed
+ * Revisited iPhone bottom row.
+ * New translations: CA, DA, DE, HE, HU (Thanks http://crowdin.net !)
+All requirements can be seen [http://s.evendanan.net/ask_r55 here]
+
 = 20111015 =
  * Nicer selected layout notification icon (status icon)
  * Bug fixes.
