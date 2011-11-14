@@ -3,6 +3,7 @@
 
 = Introduction =
 Here we'll learn how to install, use, and setup Any Soft Keyboard.
+Note: At the end of this article there a list of other sources from the net for 'How to setup AnySoftKeyboard'.
 
 ==Installing and enabling==
 Open Android Market, and look-up "!AnySoftKeyboard".
@@ -71,5 +72,6 @@ It is possible to switch layouts by pressing ALT+SPACE in the physical keyboard.
 
 == More help ==
  * Setup in [http://www.romandroid.ch/applications/clavier-suisse-romand-pour-android-anysoftkeyboard Swiss]
+ * Setup in [http://forums.pilpilon.co.il/viewtopic.php?f=1&t=32 Hebrew]
 
 Enjoy!
