@@ -1,0 +1,8 @@
+#summary Mentions of anysoftkeyboard.
+
+= Preinstalls =
+
+ * [http://www.crypto.gr/ Crypto], a Greek IT company, has released Passepartout 7" tablet with Android 2.3, and AnySoftKeyboard preinstalled together with the Greek language pack. Mentioned in the [http://www.crypto.gr/en/manuals/Passepartout_70_C124_EN_GR_V1.0.pdf manual].
+
+
+= Blogs =
