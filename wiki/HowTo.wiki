@@ -69,4 +69,7 @@ The HTC G1, Motorola Droid/Milestone and other devices include a physical keyboa
 The physical keyboard layout will be similar to the one currently selected in Any Soft Keyboard on-screen keyboard.
 It is possible to switch layouts by pressing ALT+SPACE in the physical keyboard.
 
+== More help ==
+ * Setup in [http://www.romandroid.ch/applications/clavier-suisse-romand-pour-android-anysoftkeyboard Swiss]
+
 Enjoy!
