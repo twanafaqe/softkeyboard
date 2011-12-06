@@ -1,6 +1,13 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
+= 20111204 =
+ * External themes (skins) support! (look for ICS theme in the Market)
+ * Split/Merge keyboard. Use two-fingers gestures separate and pinch to split or merge back current keyboard (works in landscape).
+ * Popup keys offset fix.
+ * Suppport for really big dictionaries (wait for it).
+ * Additional bug fixes.
+ * New translations: IT, TH, and CA (Thanks http://crowdin.net !)
 All requirements can be seen [http://s.evendanan.net/ask_r57 here]
 
 = Latest released version =
