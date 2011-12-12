@@ -1,6 +1,13 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
+
+= Latest released version =
+= 20111212 =
+ * More capable theme support.
+ * Various bug fixes (including 16 key layout crash)
+All requirements can be seen [http://s.evendanan.net/ask_r59 here]
+
 = 20111204 =
  * External themes (skins) support! (look for ICS theme in the Market)
  * Split/Merge keyboard. Use two-fingers gestures separate and pinch to split or merge back current keyboard (works in landscape).
@@ -10,7 +17,6 @@
  * New translations: IT, TH, and CA (Thanks http://crowdin.net !)
 All requirements can be seen [http://s.evendanan.net/ask_r57 here]
 
-= Latest released version =
 = 20111024 =
  * Shift erratic behavior fix.
  * User dictionay saving issue fixed
