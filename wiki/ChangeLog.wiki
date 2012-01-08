@@ -9,7 +9,15 @@
  * New translations
 All requirements can be seen [http://s.evendanan.net/ask_r63 here]
 
-= 20111212 =
+
+= 20111223 v61 =
+ * A more capable theme support.
+ * Hint characters at the bottom-right corner of the key.
+ * Initial keyboard split/merge state is now configurable.
+ * Bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r61 here]
+
+= 20111212 v59=
  * More capable theme support.
  * Various bug fixes (including 16 key layout crash)
 All requirements can be seen [http://s.evendanan.net/ask_r59 here]
