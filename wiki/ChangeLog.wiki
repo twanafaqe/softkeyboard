@@ -3,6 +3,12 @@
 = Upcoming version =
 
 = Latest released version =
+= 20120108 v63 =
+ * Voice Input support (Android 2.2+)
+ * Some bug fixes
+ * New translations
+All requirements can be seen [http://s.evendanan.net/ask_r63 here]
+
 = 20111212 =
  * More capable theme support.
  * Various bug fixes (including 16 key layout crash)
