@@ -1,6 +1,9 @@
 #summary The versions changes log - what changed with each version
 #labels Featured
 = Upcoming version =
+= ???? v69 =
+ * Something
+All requirements can be seen [http://s.evendanan.net/ask_r69 here]
 
 = Latest released version =
 
