@@ -3,6 +3,23 @@
 = Upcoming version =
 
 = Latest released version =
+
+= 20120228 v67 =
+ * Contacts dictionary fix.
+ * New addons detection fix.
+ * Words editor crash fix on selected devices.
+ * New translations: EL, PT, HU, ES, MK, HE, CA, IT.
+ * Other bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r67 here]
+
+= 20120207 v65 =
+ * UX changes, e.g., tips, new user activation guide, etc.
+ * User dictionary editor (accessible next to User Dictionary settings).
+ * Several crashes fix (User dictionay, Long-press smiley).
+ * Translations: CA, DE, EL, FR, HU, IT, PT, RU.
+ * Other bug fixes.
+All requirements can be seen [http://s.evendanan.net/ask_r65 here]
+
 = 20120108 v63 =
  * Voice Input support (Android 2.2+)
  * Some bug fixes
